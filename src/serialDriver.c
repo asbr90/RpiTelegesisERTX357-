@@ -11,8 +11,6 @@
 #include <malloc.h>
 
 int fileDescriptor = -1;
-//char* device; = "/dev/ttyUSB0";
-//int baud = 9600;
 
 int serialOpenPort(char *COM, int baud) {
 
