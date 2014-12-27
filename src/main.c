@@ -20,18 +20,23 @@ int main() {
 	InitializeSerialPort("/dev/ttyUSB0");
 	ProductIdentificationInformation(&productInfo);
 
-/*	printf("%s\n",productInfo.deviceName);
-	printf("%s\n",productInfo.firmwareRevision);
-	printf("%s\n",productInfo.EUID);
-*/
+	/*	printf("%s\n",productInfo.deviceName);
+	 printf("%s\n",productInfo.firmwareRevision);
+	 printf("%s\n",productInfo.EUID);
+	 */
 
-	if((error_code = EstablishPAN(&zigbee))!=OK)
-		printf("%s\n",GetErrorCodeMessage(error_code));
-	else
-		printf("OK\n");
+	if ((error_code = EstablishPAN(&zigbee)) != OK)
+		printf("%s\n", GetErrorCodeMessage(error_code));
+	else {
+		printf("Channel: %d\n", zigbee.channel);
+		printf("PID: %s\n", zigbee.PID);
+		printf("EPID: %s\n", zigbee.EPID);
+
+	}
+
+	printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
 
 	//printf("%s\n",getErrorCodeMessage(getErrorCodeNumber("1A")));
 	return 0;
 }
-
 

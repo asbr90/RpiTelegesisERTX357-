@@ -156,10 +156,11 @@ typedef struct struct_zigbee {
 	short nwk_addr; /**<This is allocated to the device when it joins the
 	 PAN and cannot be changed or preset, except that 0x0000 is always the coordinator. It is
 	 analogous to a temporary IP address. Otherwise known as the Node ID.*/
-	short channel; /**<*Joined channel in the network*/
-	int PID; /**<Personal Area Network ID (PANID)*/
-	long EPID; /**<Extended Personal Area Network ID (EPID)*/
-	char stack_profile; /**<The Zigbee stack profile*/
+	int channel; /**<*Joined channel in the network*/
+	char* PID; /**<Personal Area Network ID (PANID)*/
+	char* EPID; /**<Extended Personal Area Network ID (EPID)*/
+	char* stackProfile; /**<The Zigbee stack profile*/
+	char* clusterList;	/**< list of 16 bit cluster identifiers in hexadecimal representation */ // TODO cluster linked list 
 } zigbee_t;
 
 /**
@@ -207,6 +208,16 @@ int ProductIdentificationInformation(telegesis_t*);
  */
 
 char* EstablishPAN(zigbee_t*);
+
+/**
+ *	@brief	Disassociate Local Device From Pan. Use with care on a Coordinator. It will not be
+ * 			able to rejoin the PAN. If disassociation was successfull the LeftPAN prompt received.
+ *
+ *	@param	zigbee_t struct with the current settings of the PAN
+ *	@return	OK responed if already is fine.
+ *	@return	Error:<errorCode>
+ */
+char* DisassociateLocalDeviceFromPAN(zigbee_t*);
 
 void bootload(void);
 

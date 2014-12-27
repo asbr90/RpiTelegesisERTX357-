@@ -10,28 +10,35 @@
 #include <stdio.h>
 
 
-/*Trim whitespaces*/
-
-char *strstrip(char *s){
-    size_t size;
-    char *end;
-
-    size = strlen(s);
-
-    if (!size)
-            return s;
-
-    end = s + size - 1;
-    while (end >= s && isspace(*end))
-            end--;
-    *(end + 1) = '\0';
-
-    while (*s && isspace(*s))
-            s++;
-
-    return s;
+/*Prompt output*/
+void promptRequest(char* cmd){
+	printf("Request << \n\t%s\n>>\n",cmd);
 }
 
+void promptResponse(char* msg){
+	printf("Response << \n\t%s\n>>\n",msg);
+}
+
+/*Trim whitespaces*/
+char *strstrip(char *s) {
+	size_t size;
+	char *end;
+
+	size = strlen(s);
+
+	if (!size)
+		return s;
+
+	end = s + size - 1;
+	while (end >= s && isspace(*end))
+		end--;
+	*(end + 1) = '\0';
+
+	while (*s && isspace(*s))
+		s++;
+
+	return s;
+}
 
 char* IsError(char* response) {
 	return strstr(response, ERROR);
@@ -89,11 +96,9 @@ void bootload(void) {
 	}
 }
 
-
-
 char* GetErrorCodeMessage(char* errorNumber) {
-	char *s = strstrip(errorNumber);		//remove whitespaces
-	errorEntry = lookup(s);
+
+	errorEntry = lookup(strstrip(errorNumber));
 
 	if (errorEntry == NULL)
 		printf("There is no entry for this error code\n");
@@ -101,23 +106,51 @@ char* GetErrorCodeMessage(char* errorNumber) {
 	return errorEntry->defn;
 }
 
-char* EstablishPAN(zigbee_t* zigbee) {
-	char response[255];
-	char* retValue;
+char* DisassociateLocalDeviceFromPAN(zigbee_t* zigbee) {
+	char response[255], rp2[255];
 
-	serialTransmit(ATEN);
+	serialTransmit(ATDASSL);
+	promptRequest(ATDASSL);
 	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
 
 	if (IsError(response) == NULL) {
-		strtok(response, ":");
-		zigbee->channel = (unsigned short) atoi(strtok(NULL, ","));
-		 printf("%d\n", zigbee->channel);
-		 zigbee->PID = atoi(strtok(NULL, ","));
-		 zigbee->EPID = atol(strtok(NULL, "\n"));
+		serialReceive();
+		sprintf(rp2, "%s", serialReceive());
+		promptResponse(rp2);
 
 		return OK;
 	} else {
 		strtok(response, "\n");
 		return GetErrorCodeNumber(strtok(NULL, "\n"));
 	}
+}
+
+char* EstablishPAN(zigbee_t* zigbee) {
+	char* response[255], *rp2[255];
+
+	serialTransmit(ATEN);
+	promptRequest(ATEN);
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL) {
+		sprintf(rp2, "%s", serialReceive());
+		promptResponse(rp2);
+
+		strtok(rp2, "\n");
+		strtok(NULL, "\n");
+		strtok(NULL, ":");
+
+		zigbee->channel =  atoi(strtok(NULL, ","));
+		zigbee->PID = strtok(NULL, ",");
+		zigbee->EPID = strtok(NULL, "\n");
+
+		return OK;
+	} else {
+		strtok(response, "\n");
+		return GetErrorCodeNumber(strtok(NULL, "\n"));
+	}
+
+	return NULL;
 }
