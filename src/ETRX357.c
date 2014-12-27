@@ -7,6 +7,31 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+
+/*Trim whitespaces*/
+
+char *strstrip(char *s){
+    size_t size;
+    char *end;
+
+    size = strlen(s);
+
+    if (!size)
+            return s;
+
+    end = s + size - 1;
+    while (end >= s && isspace(*end))
+            end--;
+    *(end + 1) = '\0';
+
+    while (*s && isspace(*s))
+            s++;
+
+    return s;
+}
+
 
 char* IsError(char* response) {
 	return strstr(response, ERROR);
@@ -41,20 +66,42 @@ int ProductIdentificationInformation(telegesis_t *info) {
 
 }
 
-int GetErrorCodeNumber(char* error) {
+char* GetErrorCodeNumber(char* error) {
 	char* error_code;
-
-	printf("%s\n",strtok(error, ":"));
+	strtok(error, ":");
 	error_code = strtok(NULL, "\0");
-	printf("%s\n",error_code);
-	return (int) strtoul(error_code, NULL, 16);
+	return error_code;
 }
 
-char* GetErrorCodeMessage(int errorNumber) {
-	return error_list[errorNumber];
+void bootload(void) {
+	//initialize error code lookup table
+	int errorsize = sizeof(error) / sizeof(error[0]);
+	int errortextsize = sizeof(error_list) / sizeof(error_list[0]);
+	int index;
+
+	if (errorsize == errortextsize) {
+		printf("Initialize lookup table for error handling with %d entries\n",
+				errorsize);
+
+		for (index = 0; index < errorsize; index++) {
+			install(error[index], error_list[index]);
+		}
+	}
 }
 
-int EstablishPAN(zigbee_t* zigbee) {
+
+
+char* GetErrorCodeMessage(char* errorNumber) {
+	char *s = strstrip(errorNumber);		//remove whitespaces
+	errorEntry = lookup(s);
+
+	if (errorEntry == NULL)
+		printf("There is no entry for this error code\n");
+
+	return errorEntry->defn;
+}
+
+char* EstablishPAN(zigbee_t* zigbee) {
 	char response[255];
 	char* retValue;
 
@@ -63,17 +110,14 @@ int EstablishPAN(zigbee_t* zigbee) {
 
 	if (IsError(response) == NULL) {
 		strtok(response, ":");
-		printf("%s\n", response);
-		/*zigbee->channel = (unsigned short) atoi(strtok(NULL, ","));
-		printf("%d\n", zigbee->channel);
-		zigbee->PID = atoi(strtok(NULL, ","));
-		zigbee->EPID = atol(strtok(NULL, "\n"));*/
+		zigbee->channel = (unsigned short) atoi(strtok(NULL, ","));
+		 printf("%d\n", zigbee->channel);
+		 zigbee->PID = atoi(strtok(NULL, ","));
+		 zigbee->EPID = atol(strtok(NULL, "\n"));
 
 		return OK;
 	} else {
-		//strtok(response, "\n");
 		strtok(response, "\n");
-		//printf("code: %d\n",GetErrorCodeNumber(strtok(NULL, "\n")));
 		return GetErrorCodeNumber(strtok(NULL, "\n"));
 	}
 }

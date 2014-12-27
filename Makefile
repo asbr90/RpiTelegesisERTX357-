@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-c -Wall -ggdb -I/usr/local/include 
 LDFLAGS=-L/usr/local/lib -lwiringPi
-SOURCES= src/serialDriver.c  src/main.c src/ATParser.c src/ETRX357.c
+SOURCES= src/serialDriver.c  src/main.c src/ATParser.c src/ETRX357.c src/LUT.c
 DISTDIR= bin/
 ODIR=obj
 SDIR=src
