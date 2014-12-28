@@ -14,7 +14,6 @@
  * 			This algorithm is given by Brian W.Kernighan and Dennis M.Ritchie.
  */
 
-
 #ifndef	LUT_H_
 #define LUT_H_
 #include <string.h>

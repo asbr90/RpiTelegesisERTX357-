@@ -9,6 +9,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/* insert new entry in the linked list (insert right)*/
+void listPANInsert(node **list, int channel, char* PID, char* EPID, int stackProfile, int joinPermission){
+
+	node* new_node				= (node*) malloc(sizeof(struct list_pans));
+	new_node->channel 			= channel;
+
+	new_node->PID 				= PID;
+	new_node->EPID 				= EPID;
+	new_node->stackProfile 		= stackProfile;
+	new_node->joinPermission 	= joinPermission;
+	new_node->next				= *list;
+
+	*list     					= new_node;
+
+}
 
 /*Prompt output*/
 void promptRequest(char* cmd){
@@ -119,7 +134,7 @@ char* DisassociateLocalDeviceFromPAN(zigbee_t* zigbee) {
 		sprintf(rp2, "%s", serialReceive());
 		promptResponse(rp2);
 
-		return OK;
+		return (char*)"OK";
 	} else {
 		strtok(response, "\n");
 		return GetErrorCodeNumber(strtok(NULL, "\n"));
@@ -127,7 +142,7 @@ char* DisassociateLocalDeviceFromPAN(zigbee_t* zigbee) {
 }
 
 char* EstablishPAN(zigbee_t* zigbee) {
-	char* response[255], *rp2[255];
+	char response[255], rp2[255];
 
 	serialTransmit(ATEN);
 	promptRequest(ATEN);
@@ -146,11 +161,46 @@ char* EstablishPAN(zigbee_t* zigbee) {
 		zigbee->PID = strtok(NULL, ",");
 		zigbee->EPID = strtok(NULL, "\n");
 
-		return OK;
+		return (char*)OK;
+	} else {
+		strtok(response, "\n");
+		return GetErrorCodeNumber(strtok(NULL, "\n"));
+	}
+}
+
+char* ScanForActivePAN(node **list){
+	char response[255], rp2[255];
+	int channel, stackProfile, joinPermission;
+	char* PID, *EPID;
+	node *n;
+
+	serialTransmit(ATPANSCAN);
+	promptRequest(ATPANSCAN);
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+	delay(4000);		// this is the max scanning time.Hint: could be change to interrupt handling?!
+
+	if (IsError(response) == NULL) {
+		sprintf(rp2, "%s", serialReceive());
+		promptResponse(rp2);
+
+		strtok(rp2, "\n");
+		strtok(NULL, ":");
+
+		channel = atoi(strtok(NULL, ","));
+		PID = strtok(NULL, ",");
+		EPID = strtok(NULL, ",");
+		stackProfile =  atoi(strtok(NULL, ","));
+		joinPermission = atoi(strtok(NULL, "\n"));
+
+		listPANInsert(list, channel, PID, EPID, stackProfile, joinPermission);
+		//printf("Channel: %d \n",(*(*list)).channel);
+		//printf("PID: %s\n",(*(*list)).PID);
+
+		return (char*)OK;
 	} else {
 		strtok(response, "\n");
 		return GetErrorCodeNumber(strtok(NULL, "\n"));
 	}
 
-	return NULL;
 }

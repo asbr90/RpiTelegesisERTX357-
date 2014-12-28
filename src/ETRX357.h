@@ -138,7 +138,7 @@ struct nlist *errorEntry;
 /*The following prompts can show up during the operation of the ETRXn modules. 
  * Telegesis response:
  */
-#define OK			1
+#define OK			"OK"
 #define ERROR 		"ERROR"
 #define ACK			"ACK"
 #define NACK		"NACK"
@@ -172,6 +172,19 @@ typedef struct struct_telegesis {
 	char* EUID;
 } telegesis_t;
 
+
+struct list_pans {
+	int channel;		/**< Represents the channel*/
+	char* PID;			/**< Represents the PAN ID */
+	char* EPID;			/**< Represents the extended PAN ID */ 
+	int stackProfile;	/**< Represents the Zigbee stack profile*/
+	int joinPermission; /**< indicates wheter the network is allowing additional nodes to join.*/
+	struct list_pans *next;
+};
+
+typedef struct list_pans node; /**< Includes a list of scanned PANs */
+
+
 /**
  *	Functions
  */
@@ -190,6 +203,11 @@ char* GetErrorCodeNumber(char*);
  */
 char* GetErrorCodeMessage(char*);
 
+/**
+  *	@brief	Initialize the serial driver
+  *	@return TRUE If the driver has been initialized
+  *	@return FALSE If the driver was not initialized
+  */
 short InitializeSerialPort(char*);
 
 /**
@@ -202,7 +220,7 @@ int ProductIdentificationInformation(telegesis_t*);
 /**
  *	@brief	Establish Personal Area Network. The local node becomes a coordinator and
  *			performs an energy scan on all channels selected in S00.
- *	@param	struct_zigbee
+ *	@param	zigbee_t*
  *	@return	OK
  *	@return	ERROR:<errorcode>
  */
@@ -213,12 +231,27 @@ char* EstablishPAN(zigbee_t*);
  *	@brief	Disassociate Local Device From Pan. Use with care on a Coordinator. It will not be
  * 			able to rejoin the PAN. If disassociation was successfull the LeftPAN prompt received.
  *
- *	@param	zigbee_t struct with the current settings of the PAN
+ *	@param	zigbee_t* struct with the current settings of the PAN
  *	@return	OK responed if already is fine.
  *	@return	Error:<errorCode>
  */
 char* DisassociateLocalDeviceFromPAN(zigbee_t*);
 
+/**
+  *	@brief	Scan for Active PANs, The node gives a list of all PANs found.
+  *			Scanning for active PANs can take up to 4 seconds.
+  *	@param[in]	node* Is an empty linked list in which the scanned PANs are stored.  
+  *	@return 	OK If everything is fine
+  *	@return 	ERROR:<errorcode> If everything went wrong  	
+  */ 
+char* ScanForActivePAN(node**);
+
+/**
+  *	@brief	Load needed issues at start. This should be the first function call in 
+  * 		your routine to use this library.
+  *
+  */
 void bootload(void);
+
 
 #endif
