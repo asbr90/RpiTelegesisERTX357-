@@ -188,8 +188,8 @@ struct nlist *errorEntry;	/**< list of error entries */
  	#define TRACK2		"TRACK2"
  	#define PWRCHANGE	"PWRCHANGE"
  	#define ADDRRESP	"AddrResp"
- 	#define RX			"RX"
- 	#define NM 			"NM"
+ 	#define RX		"RX"
+ 	#define NM 		"NM"
  	#define ENTERINGBLOAD "ENTERING BLOAD"
 /** @} */ // end of prompt overview
 

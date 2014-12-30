@@ -39,7 +39,7 @@ int main() {
 	 printf("EPID: %s\n", zigbee.EPID);
 	 }*/
 
-	ScanForActivePAN(&list_pan);
+	//ScanForActivePAN(&list_pan);
 	/*printf("%d\n", list_pan->channel);
 	printf("%s\n", list_pan->PID);
 	printf("%s\n", list_pan->EPID);
@@ -48,6 +48,7 @@ int main() {
 	*/
 
 	//printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
+	printf("%s\n", JoinNetwork(&zigbee));
 
 	return 0;
 }

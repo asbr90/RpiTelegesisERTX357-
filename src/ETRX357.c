@@ -137,7 +137,7 @@ char* DisassociateLocalDeviceFromPAN(zigbee_t* zigbee) {
 		return (char*)"OK";
 	} else {
 		strtok(response, "\n");
-		return GetErrorCodeNumber(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
 }
 
@@ -164,7 +164,7 @@ char* EstablishPAN(zigbee_t* zigbee) {
 		return (char*)OK;
 	} else {
 		strtok(response, "\n");
-		return GetErrorCodeNumber(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
 }
 
@@ -178,7 +178,7 @@ char* ScanForActivePAN(node **list){
 	promptRequest(ATPANSCAN);
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
-	delay(4000);		// this is the max scanning time.Hint: could be change to interrupt handling?!
+	delay(4000);		// this is the max scanning time. Hint: could be change to interrupt handling?!
 
 	if (IsError(response) == NULL) {
 		sprintf(rp2, "%s", serialReceive());
@@ -200,7 +200,35 @@ char* ScanForActivePAN(node **list){
 		return (char*)OK;
 	} else {
 		strtok(response, "\n");
-		return GetErrorCodeNumber(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
-
 }
+
+char* JoinNetwork(zigbee_t* zigbee){
+	char response[255], rp2[255];
+
+	serialTransmit(ATJN);
+	promptRequest(ATJN);
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	delay(4000);		// this is the max scanning time. Hint: could be change to interrupt handling?!
+
+	sprintf(rp2, "%s", serialReceive());
+	promptResponse(rp2);
+
+	if (IsError(rp2) == NULL) {
+		promptResponse(rp2);
+		//!IMPORTANT!! This part should be tested
+		printf("%s\n",strtok(rp2, ":"));
+		printf("%s\n",strtok(NULL, ","));
+		printf("%s\n",strtok(NULL, ","));
+		printf("%s\n",strtok(NULL, "\n"));
+
+		return (char*) OK;
+	}else{
+		strtok(rp2, ":");
+		return GetErrorCodeMessage(strtok(NULL, "\n"));
+	}
+}
+
