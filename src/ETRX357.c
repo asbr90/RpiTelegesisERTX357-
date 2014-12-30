@@ -8,30 +8,31 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <errno.h>
 /* insert new entry in the linked list (insert right)*/
-void listPANInsert(node **list, int channel, char* PID, char* EPID, int stackProfile, int joinPermission){
+void listPANInsert(node **list, int channel, char* PID, char* EPID,
+		int stackProfile, int joinPermission) {
 
-	node* new_node				= (node*) malloc(sizeof(struct list_pans));
-	new_node->channel 			= channel;
+	node* new_node = (node*) malloc(sizeof(struct list_pans));
+	new_node->channel = channel;
 
-	new_node->PID 				= PID;
-	new_node->EPID 				= EPID;
-	new_node->stackProfile 		= stackProfile;
-	new_node->joinPermission 	= joinPermission;
-	new_node->next				= *list;
+	new_node->PID = PID;
+	new_node->EPID = EPID;
+	new_node->stackProfile = stackProfile;
+	new_node->joinPermission = joinPermission;
+	new_node->next = *list;
 
-	*list     					= new_node;
+	*list = new_node;
 
 }
 
 /*Prompt output*/
-void promptRequest(char* cmd){
-	printf("Request \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n",cmd);
-}					   	
+void promptRequest(char* cmd) {
+	printf("\nRequest: \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n", cmd);
+}
 
-void promptResponse(char* msg){
-	printf("Response \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n",msg);
+void promptResponse(char* msg) {
+	printf("\nResponse: \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n", msg);
 }
 
 /*Trim whitespaces*/
@@ -134,9 +135,10 @@ char* DisassociateLocalDeviceFromPAN(zigbee_t* zigbee) {
 		sprintf(rp2, "%s", serialReceive());
 		promptResponse(rp2);
 
-		return (char*)"OK";
+		return (char*) "OK";
 	} else {
 		strtok(response, "\n");
+		strtok(NULL, ":");
 		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
 }
@@ -157,28 +159,28 @@ char* EstablishPAN(zigbee_t* zigbee) {
 		strtok(NULL, "\n");
 		strtok(NULL, ":");
 
-		zigbee->channel =  atoi(strtok(NULL, ","));
+		zigbee->channel = atoi(strtok(NULL, ","));
 		zigbee->PID = strtok(NULL, ",");
 		zigbee->EPID = strtok(NULL, "\n");
 
-		return (char*)OK;
+		return (char*) OK;
 	} else {
 		strtok(response, "\n");
+		strtok(NULL, ":");
 		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
 }
 
-char* ScanForActivePAN(node **list){
+char* ScanForActivePAN(node **list) {
 	char response[255], rp2[255];
 	int channel, stackProfile, joinPermission;
 	char* PID, *EPID;
-	node *n;
 
 	serialTransmit(ATPANSCAN);
 	promptRequest(ATPANSCAN);
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
-	delay(4000);		// this is the max scanning time. Hint: could be change to interrupt handling?!
+	delay(4000);// this is the max scanning time. Hint: could be change to interrupt handling?!
 
 	if (IsError(response) == NULL) {
 		sprintf(rp2, "%s", serialReceive());
@@ -190,69 +192,121 @@ char* ScanForActivePAN(node **list){
 		channel = atoi(strtok(NULL, ","));
 		PID = strtok(NULL, ",");
 		EPID = strtok(NULL, ",");
-		stackProfile =  atoi(strtok(NULL, ","));
+		stackProfile = atoi(strtok(NULL, ","));
 		joinPermission = atoi(strtok(NULL, "\n"));
 
 		listPANInsert(list, channel, PID, EPID, stackProfile, joinPermission);
 		//printf("Channel: %d \n",(*(*list)).channel);
 		//printf("PID: %s\n",(*(*list)).PID);
 
-		return (char*)OK;
+		return (char*) OK;
 	} else {
 		strtok(response, "\n");
+		strtok(NULL, ":");
 		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
 }
 
-char* JoinNetwork(zigbee_t* zigbee){
-	char response[255], rp2[255];
+char* JoinNetwork(zigbee_t* zigbee) {
+	char response[255];
 
 	serialTransmit(ATJN);
 	promptRequest(ATJN);
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
 
-	delay(4000);		// this is the max scanning time. Hint: could be change to interrupt handling?!
+	delay(4000);// this is the max scanning time. Hint: could be change to interrupt handling?!
 
-	sprintf(rp2, "%s", serialReceive());
-	promptResponse(rp2);
-
-	if (IsError(rp2) == NULL) {
-		promptResponse(rp2);
+	if (IsError(response) == NULL) {
+		//promptResponse(rp2);
 		//!IMPORTANT!! This part should be tested and the received value 
 		// set to the zigbee struct
-		printf("%s\n",strtok(rp2, ":"));
-		printf("%s\n",strtok(NULL, ","));
-		printf("%s\n",strtok(NULL, ","));
-		printf("%s\n",strtok(NULL, "\n"));
+
+		printf("Response: %s\n", strtok(response, ":"));
+		printf("%s\n", strtok(NULL, ","));
+		printf("%s\n", strtok(NULL, ","));
+		printf("%s\n", strtok(NULL, "\n"));
 
 		return (char*) OK;
-	}else{
-		strtok(rp2, ":");
+	} else {
+		strtok(response, "\n");
+		strtok(NULL, ":");
 		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
 }
 
-char* DisplayNetworkInformation(void){
+char* DisplayNetworkInformation(void) {
 	char response[255];
 
 	serialTransmit(ATN);
-	promptRequest(ATN); 
+	promptRequest(ATN);
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
 
-	strtok(response,"\n");
+	strtok(response, "\n");
 
-	if(strstr(strtok(NULL,"\n"),"NoPAN"))
+	if (strstr(strtok(NULL, "\n"), "NoPAN"))
 		return "NoPAN";
-	else{
-		printf("%s\n",strtok(NULL,"\n"));
+	else {
+		printf("%s\n", strtok(NULL, "\n"));
 		return OK;
-	}		
+	}
 }
 
-char* RejoinNetwork(int b){}
+/*Not tested*/
+char* RejoinNetwork(char* b) {
+	char response[255];
+	char * command;
 
+	if((command = malloc(strlen(":") + strlen(ATREJOIN)+strlen(b)+1)) != NULL){
+		command[0] = '\0';   // ensures the memory is an empty string
+	    strcat(command,ATREJOIN);
+	    strcat(command,":");
+	    strcat(command,b);
+	} else {
+	    printf("malloc failed!\n");
+	}
 
-char* ChangeNetworkChannel(char* dB){}
+	serialTransmit(command);
+	promptRequest(command);
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL) {
+		return (char*) OK;
+	} else {
+		strtok(response, "\n");
+		strtok(NULL, ":");
+		return GetErrorCodeMessage(strtok(NULL, "\n"));
+	}
+}
+
+char* ChangeNetworkChannel(char* dB) {
+	char response[255];
+	char * command;
+
+		if((command = malloc(strlen(":") + strlen(ATCCHANGE)+strlen(dB)+1)) != NULL){
+			command[0] = '\0';   // ensures the memory is an empty string
+		    strcat(command,ATCCHANGE);
+		    if(strcmp(dB,"00")!= 0){
+			    strcat(command,":");
+			    strcat(command,dB);
+				}
+		} else {
+		    printf("malloc failed!\n");
+		}
+	
+	serialTransmit(command);
+	promptRequest(command);
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL) {
+		return (char*) OK;
+	} else {
+		strtok(response, "\n");
+		strtok(NULL, ":");
+		return GetErrorCodeMessage(strtok(NULL, "\n"));
+	}
+}
 

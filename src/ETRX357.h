@@ -344,7 +344,7 @@ char* DisplayNetworkInformation(void);
   *	@return 	OK If everything went well
   *	@return 	ERROR:<errorcode> If something went wrong
   */
-char* RejoinNetwork(int);
+char* RejoinNetwork(char*);
 
 /**
   *	@brief	Change the network's channel. Ask all nodes in the network to change their channel.
