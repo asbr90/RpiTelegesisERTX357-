@@ -29,7 +29,7 @@ int main() {
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
 
-	error_code = EstablishPAN(&zigbee);
+/*	error_code = EstablishPAN(&zigbee);
 
 	if (error_code != (char*) OK)
 		printf("%s\n", error_code);
@@ -38,19 +38,18 @@ int main() {
 		printf("PID: %s\n", zigbee.PID);
 		printf("EPID: %s\n", zigbee.EPID);
 	}
-
-	//ScanForActivePAN(&list_pan);
-	/*printf("%d\n", list_pan->channel);
-	 printf("%s\n", list_pan->PID);
-	 printf("%s\n", list_pan->EPID);
-	 printf("%d\n", list_pan->stackProfile);
-	 printf("%d\n", list_pan->joinPermission);
-	 */
-
+*/
+	ScanForActivePAN(&list_pan);
+/*	printf("%d\n", list_pan->channel);
+	printf("%s\n", list_pan->PID);
+	printf("%s\n", list_pan->EPID);
+	printf("%d\n", list_pan->stackProfile);
+	printf("%d\n", list_pan->joinPermission);
+*/
 	//printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
-	//printf("%s\n", JoinNetwork(&zigbee));
+	printf("%s\n", JoinNetwork(&zigbee));
 	printf("Display: %s \n", DisplayNetworkInformation());
-	printf("Change Channel: %s\n",ChangeNetworkChannel("00"));
+	printf("Change Channel: %s\n",ChangeNetworkChannel("1A"));
 	return 0;
 }
 

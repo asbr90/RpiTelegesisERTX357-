@@ -30,7 +30,7 @@ void listPANInsert(node **list, int channel, char* PID, char* EPID,
 void promptRequest(char* cmd) {
 	printf("\nRequest: \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n", cmd);
 }
-
+/*Prompt Input*/
 void promptResponse(char* msg) {
 	printf("\nResponse: \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n", msg);
 }
@@ -91,8 +91,9 @@ int ProductIdentificationInformation(telegesis_t *info) {
 
 char* GetErrorCodeNumber(char* error) {
 	char* error_code;
-	strtok(error, ":");
-	error_code = strtok(NULL, "\0");
+	strtok(error, "\n");
+	strtok(NULL, ":");
+	error_code = strtok(NULL, "\n");
 	return error_code;
 }
 
@@ -137,9 +138,7 @@ char* DisassociateLocalDeviceFromPAN(zigbee_t* zigbee) {
 
 		return (char*) "OK";
 	} else {
-		strtok(response, "\n");
-		strtok(NULL, ":");
-		return GetErrorCodeMessage(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 	}
 }
 
@@ -165,9 +164,8 @@ char* EstablishPAN(zigbee_t* zigbee) {
 
 		return (char*) OK;
 	} else {
-		strtok(response, "\n");
-		strtok(NULL, ":");
-		return GetErrorCodeMessage(strtok(NULL, "\n"));
+
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 	}
 }
 
@@ -201,9 +199,7 @@ char* ScanForActivePAN(node **list) {
 
 		return (char*) OK;
 	} else {
-		strtok(response, "\n");
-		strtok(NULL, ":");
-		return GetErrorCodeMessage(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 	}
 }
 
@@ -222,16 +218,14 @@ char* JoinNetwork(zigbee_t* zigbee) {
 		//!IMPORTANT!! This part should be tested and the received value 
 		// set to the zigbee struct
 
-		printf("Response: %s\n", strtok(response, ":"));
+		printf("Response Join Network: %s\n", strtok(response, ":"));
 		printf("%s\n", strtok(NULL, ","));
 		printf("%s\n", strtok(NULL, ","));
 		printf("%s\n", strtok(NULL, "\n"));
 
 		return (char*) OK;
 	} else {
-		strtok(response, "\n");
-		strtok(NULL, ":");
-		return GetErrorCodeMessage(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 	}
 }
 
@@ -275,9 +269,7 @@ char* RejoinNetwork(char* b) {
 	if (IsError(response) == NULL) {
 		return (char*) OK;
 	} else {
-		strtok(response, "\n");
-		strtok(NULL, ":");
-		return GetErrorCodeMessage(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 	}
 }
 
@@ -304,9 +296,7 @@ char* ChangeNetworkChannel(char* dB) {
 	if (IsError(response) == NULL) {
 		return (char*) OK;
 	} else {
-		strtok(response, "\n");
-		strtok(NULL, ":");
-		return GetErrorCodeMessage(strtok(NULL, "\n"));
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 	}
 }
 

@@ -182,7 +182,6 @@ long getBaudrate(long baud) {
 
 char* serialReceive(void){
 	//----- CHECK FOR ANY RX BYTES -----
-	
 	// Read up to 255 characters from the port if they are there
 	unsigned char rx_buffer[256];
 	if (fileDescriptor != -1)
