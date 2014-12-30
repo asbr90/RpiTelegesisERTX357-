@@ -27,11 +27,11 @@ void listPANInsert(node **list, int channel, char* PID, char* EPID, int stackPro
 
 /*Prompt output*/
 void promptRequest(char* cmd){
-	printf("Request << \n\t%s\n>>\n",cmd);
-}
+	printf("Request \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n",cmd);
+}					   	
 
 void promptResponse(char* msg){
-	printf("Response << \n\t%s\n>>\n",msg);
+	printf("Response \n<<<<<<<<<<<\n%s\n>>>>>>>>>>>\n",msg);
 }
 
 /*Trim whitespaces*/
@@ -219,7 +219,8 @@ char* JoinNetwork(zigbee_t* zigbee){
 
 	if (IsError(rp2) == NULL) {
 		promptResponse(rp2);
-		//!IMPORTANT!! This part should be tested
+		//!IMPORTANT!! This part should be tested and the received value 
+		// set to the zigbee struct
 		printf("%s\n",strtok(rp2, ":"));
 		printf("%s\n",strtok(NULL, ","));
 		printf("%s\n",strtok(NULL, ","));
@@ -231,4 +232,27 @@ char* JoinNetwork(zigbee_t* zigbee){
 		return GetErrorCodeMessage(strtok(NULL, "\n"));
 	}
 }
+
+char* DisplayNetworkInformation(void){
+	char response[255];
+
+	serialTransmit(ATN);
+	promptRequest(ATN); 
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	strtok(response,"\n");
+
+	if(strstr(strtok(NULL,"\n"),"NoPAN"))
+		return "NoPAN";
+	else{
+		printf("%s\n",strtok(NULL,"\n"));
+		return OK;
+	}		
+}
+
+char* RejoinNetwork(int b){}
+
+
+char* ChangeNetworkChannel(char* dB){}
 

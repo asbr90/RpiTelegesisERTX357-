@@ -48,8 +48,8 @@ int main() {
 	*/
 
 	//printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
-	printf("%s\n", JoinNetwork(&zigbee));
-
+	//printf("%s\n", JoinNetwork(&zigbee));
+	printf("%s \n",DisplayNetworkInformation());
 	return 0;
 }
 
