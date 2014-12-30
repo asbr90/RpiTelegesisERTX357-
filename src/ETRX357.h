@@ -17,7 +17,11 @@
 
 /*ZigBee types*/
 
-/*AT Commands*/
+
+/** @defgroup commands AT Commands
+ *  @{
+ */
+
 /*Module control and configuratio*/
 #define ATI				"ATI"			/**<Display Product Identification Information*/
 #define ATZ 			"ATZ"			/**<Software Reset*/
@@ -87,6 +91,13 @@
 #define ATBIND			"AT+BIND"		/**<Create Binding on Remote Device*/
 #define ATUNBIND		"AT+UNBIND"		/**<Delete Binding on Remote Device*/
 
+
+/** @} */ // end of error code
+
+/** @defgroup error List of error codes
+ *  @{
+ */
+
 /*Error codes*/
 static char* error[] = { "00", "01", "02", "04", "05", "06", "07", "08", "09",
 		"0A", "0B", "0C", "0E", "0F", "10", "12", "18", "19", "1A", "1B", "1C",
@@ -131,19 +142,56 @@ static char* error_list[] = { "Everything OK - Success",
 		"Preconfigured Key Required", "NWK Already Present", "NWK Table Full",
 		"NWK Unknown Device" };
 
-struct nlist *errorEntry;
+struct nlist *errorEntry;	/**< list of error entries */
+ /** @} */ // end of error code
 
-/*S-Registers*/
-
-/*The following prompts can show up during the operation of the ETRXn modules. 
- * Telegesis response:
+/** @defgroup sregister S-Registers
+ *  This are S-Registers
+ *  @{
  */
-#define OK			"OK"
-#define ERROR 		"ERROR"
-#define ACK			"ACK"
-#define NACK		"NACK"
-#define LEFTPAN		"LeftPAN"
-#define LOSTPAN		"LostPAN"
+
+ /** @} */ // end of s-register
+
+/** @defgroup prompt Prompt Overview
+ *  The following prompts can show up during the operation of the ETRXn modules. Most of the
+ *	prompts can be disabled using register S0E and S0F
+ *  @{
+ */
+
+	#define OK			"OK"
+	#define ERROR 		"ERROR"
+	#define ACK			"ACK"
+	#define NACK		"NACK"
+	#define LEFTPAN		"LeftPAN"
+	#define LOSTPAN		"LostPAN"
+	#define SR 			"SR"
+	#define BCAST 		"BCAST"
+	#define MCAST 		"MCAST"
+	#define SDATA		"STDATA"
+	#define FN0130		"FN0130"
+	#define FFD			"FFD"
+ 	#define SED 		"SED"
+ 	#define MED 		"MED"
+ 	#define ZED 		"ZED"
+ 	#define NEWNODE		"NEWNODE"
+ 	#define JPAN		"JPAN"
+ 	#define SINK 		"SINK"
+ 	#define ADSK		"ADSK"
+ 	#define SREAD 		"SREAD"
+ 	#define SWRITE		"SWRITE"
+ 	#define BIND 		"Bind"
+ 	#define UNBIND		"Unbind"
+ 	#define DATAMODE	"DataMode"
+ 	#define OPEN 		"OPEN"
+ 	#define CLOSED		"CLOSED"
+ 	#define TRACK		"TRACK"
+ 	#define TRACK2		"TRACK2"
+ 	#define PWRCHANGE	"PWRCHANGE"
+ 	#define ADDRRESP	"AddrResp"
+ 	#define RX			"RX"
+ 	#define NM 			"NM"
+ 	#define ENTERINGBLOAD "ENTERING BLOAD"
+/** @} */ // end of prompt overview
 
 /**
  * ZigBee structure
@@ -185,9 +233,11 @@ struct list_pans {
 typedef struct list_pans node; /**< Includes a list of scanned PANs */
 
 
-/**
- *	Functions
+/** @defgroup functions Functions
+ *  This are function prototypes
+ *  @{
  */
+
 
 /**
  *	@brief	Get the error code.
@@ -210,6 +260,14 @@ char* GetErrorCodeMessage(char*);
   */
 short InitializeSerialPort(char*);
 
+
+/**
+  *	@brief	Load needed issues at start. This should be the first function call in 
+  * 		your routine to use this library.
+  *
+  */
+void bootload(void);
+
 /**
  *	@brief	This function save the Product Identification Information.
  *	@param	telegesis_t	A pointer with type of telegesis_t. This will save the information here.
@@ -224,7 +282,6 @@ int ProductIdentificationInformation(telegesis_t*);
  *	@return	OK
  *	@return	ERROR:<errorcode>
  */
-
 char* EstablishPAN(zigbee_t*);
 
 /**
@@ -247,11 +304,62 @@ char* DisassociateLocalDeviceFromPAN(zigbee_t*);
 char* ScanForActivePAN(node**);
 
 /**
-  *	@brief	Load needed issues at start. This should be the first function call in 
-  * 		your routine to use this library.
+  *	@brief	Join to Personal Area Network. Joining a PAN can take up to 4 seconds, 
+  *			depending on the number of channels which need scanning.
+  *			This command can only be executed if the local node is not part of a PAN already.
+  *
+  *	@param[in,out]	zigbee_t* Is the struct which store the PAN informations. Only if joining was successfully.
+  *	@return 	OK	If everything went well
+  *	@return		ERROR:<errorcode> If something went wrong
+  */
+char* JoinNetwork(zigbee_t*);
+
+/**
+  *	@brief	Join specific personal area network. This command can only be executed if the local
+  *			node is not part of a PAN already. The command ignores the channel mask register S00 and the PID 
+  *			EPID settings in S02 and S03.
+  *	@param[in,out]	zigbee_t*	Is the struct which store the PAN informations. Only if joining was successfully.
+  *	@return 	OK If everything went well
+  *	@return 	ERROR:<errorcode> If something went wrong
   *
   */
-void bootload(void);
+char* JoinSpecificNetwork(zigbee_t*);
+
+/**
+  *	@brief	Only display network information.
+  * @return NoPAN If could not find any network
+  *	@return OK If found any network
+  *
+  */
+char* DisplayNetworkInformation(void);
+
+/**
+  *	@brief	Rejoin the network. Polling a parent on an end device that has lost its parent will
+  *			automatically call AT+REJOIN:1. Use on: all  devices expect coordinator (COO). 
+  *			
+  *			If the contact with the network has been lost because an end device hast lost its parent,
+  *			the network has changed channel, or updated it encryption key the command can be used
+  *			to rejoin the network.
+  *	@param[in]	If is set to 0 join without the known network key (unencrypted) and if is set to 1 join encrypted.
+  *	@return 	OK If everything went well
+  *	@return 	ERROR:<errorcode> If something went wrong
+  */
+char* RejoinNetwork(int);
+
+/**
+  *	@brief	Change the network's channel. Ask all nodes in the network to change their channel.
+  *			If no channel is specified a danrom channel out of the channels masked in S00 is picked
+  *			which wasn't previously blacklisted because of excessive packet loss.
+  *
+  *			Use on: Network Manager.
+  *	@param[in]	distance in dB. Is an optional parameter. It's ranging from 0B to 1A. 
+  *	@return 	OK If everything went well
+  * @retrun 	ERROR:<errorcode> If something went wrong 	
+  */
+char* ChangeNetworkChannel(char* dB);
+
+
+ /** @} */ // end of functions
 
 
 #endif
