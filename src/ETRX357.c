@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+
 /* insert new entry in the linked list (insert right)*/
 void listPANInsert(node **list, int channel, char* PID, char* EPID,
 		int stackProfile, int joinPermission) {
@@ -252,13 +253,14 @@ char* RejoinNetwork(char* b) {
 	char response[255];
 	char * command;
 
-	if((command = malloc(strlen(":") + strlen(ATREJOIN)+strlen(b)+1)) != NULL){
+	if ((command = malloc(strlen(":") + strlen(ATREJOIN) + strlen(b) + 1))
+			!= NULL) {
 		command[0] = '\0';   // ensures the memory is an empty string
-	    strcat(command,ATREJOIN);
-	    strcat(command,":");
-	    strcat(command,b);
+		strcat(command, ATREJOIN);
+		strcat(command, ":");
+		strcat(command, b);
 	} else {
-	    printf("malloc failed!\n");
+		printf("malloc failed!\n");
 	}
 
 	serialTransmit(command);
@@ -277,17 +279,18 @@ char* ChangeNetworkChannel(char* dB) {
 	char response[255];
 	char * command;
 
-		if((command = malloc(strlen(":") + strlen(ATCCHANGE)+strlen(dB)+1)) != NULL){
-			command[0] = '\0';   // ensures the memory is an empty string
-		    strcat(command,ATCCHANGE);
-		    if(strcmp(dB,"00")!= 0){
-			    strcat(command,":");
-			    strcat(command,dB);
-				}
-		} else {
-		    printf("malloc failed!\n");
+	if ((command = malloc(strlen(":") + strlen(ATCCHANGE) + strlen(dB) + 1))
+			!= NULL) {
+		command[0] = '\0';   // ensures the memory is an empty string
+		strcat(command, ATCCHANGE);
+		if (strcmp(dB, "00") != 0) {
+			strcat(command, ":");
+			strcat(command, dB);
 		}
-	
+	} else {
+		printf("malloc failed!\n");
+	}
+
 	serialTransmit(command);
 	promptRequest(command);
 	sprintf(response, "%s", serialReceive());
