@@ -8,14 +8,14 @@
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "ATParser.h"
 #include "ETRX357.h"
+#include "PhilipsHUE.h"
 
 int main() {
 	telegesis_t productInfo;
 	zigbee_t zigbee;
 	char* error_code;
-	node* list_pan = NULL;
+	nodes* list_pan = NULL;
 
 	list_pan = malloc(sizeof(struct list_pans));
 	list_pan->next = NULL;
@@ -28,7 +28,7 @@ int main() {
 	printf("%s\n", productInfo.deviceName);
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
-
+	scanNetwork();
 /*	error_code = EstablishPAN(&zigbee);
 
 	if (error_code != (char*) OK)

@@ -11,10 +11,10 @@
 #include <errno.h>
 
 /* insert new entry in the linked list (insert right)*/
-void listPANInsert(node **list, int channel, char* PID, char* EPID,
+void listPANInsert(nodes **list, int channel, char* PID, char* EPID,
 		int stackProfile, int joinPermission) {
 
-	node* new_node = (node*) malloc(sizeof(struct list_pans));
+	nodes* new_node = (nodes*) malloc(sizeof(struct list_pans));
 	new_node->channel = channel;
 
 	new_node->PID = PID;
@@ -170,7 +170,7 @@ char* EstablishPAN(zigbee_t* zigbee) {
 	}
 }
 
-char* ScanForActivePAN(node **list) {
+char* ScanForActivePAN(nodes **list) {
 	char response[255], rp2[255];
 	int channel, stackProfile, joinPermission;
 	char* PID, *EPID;

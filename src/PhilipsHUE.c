@@ -5,3 +5,7 @@
  */
 
 #include "PhilipsHUE.h"
+
+void scanNetwork(void){
+
+}

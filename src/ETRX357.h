@@ -139,10 +139,10 @@ static char* error_list[] = { "Everything OK - Success",
 		"Trying to join, but no beacons could be heard",
 		"Network key was sent in the clear when trying to join secured",
 		"Did not receive Network Key", "No Link Key received",
-		"Preconfigured Key Required", "NWK Already Present", "NWK Table Full",
-		"NWK Unknown Device" };
+		"Preconfigured Key Required", "NWK Already Present", "NWK Table Full", "NWK Unknown Device" };
 
-struct nlist *errorEntry;	/**< list of error entries */
+extern struct nlist *errorEntry;	/**< list of error entries */
+
  /** @} */ // end of error code
 
 /** @defgroup sregister S-Registers
@@ -230,7 +230,7 @@ struct list_pans {
 	struct list_pans *next;
 };
 
-typedef struct list_pans node; /**< Includes a list of scanned PANs */
+typedef struct list_pans nodes; /**< Includes a list of scanned PANs */
 
 
 /** @defgroup functions Functions
@@ -301,7 +301,7 @@ char* DisassociateLocalDeviceFromPAN(zigbee_t*);
   *	@return 	OK If everything is fine
   *	@return 	ERROR:<errorcode> If everything went wrong  	
   */ 
-char* ScanForActivePAN(node**);
+char* ScanForActivePAN(nodes**);
 
 /**
   *	@brief	Join to Personal Area Network. Joining a PAN can take up to 4 seconds, 
