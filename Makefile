@@ -11,10 +11,13 @@ EXECUTABLE=run
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
+	mkdir -p $(ODIR)
+	mkdir -p $(DISTDIR)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $(DISTDIR)$@
 	mv $(SDIR)/*.o obj
+	
 .c.o:   
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf $(ODIR)/*o bin/$(EXECUTABLE)
+	rm -rf $(ODIR)/*o $(DISTDIR)/$(EXECUTABLE)
