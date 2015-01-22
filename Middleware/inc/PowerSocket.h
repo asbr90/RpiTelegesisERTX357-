@@ -7,4 +7,15 @@
   *			and kilo-watt-hour consumption of the attached appliance and determine if the device is overloaded. 
   */
 
+#ifndef	POWERSOCKET_H_
+#define POWERSOCKET_H_
+
   
+char* setJoinPermitPermanent(void);
+
+/**
+  *	@param time is the time which define the time-slot for opened network
+  */
+char* openNetworkForTime(short); 
+
+#endif /*POWERSOCKET_H_*/ 
