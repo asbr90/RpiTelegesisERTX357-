@@ -15,6 +15,14 @@
 #include "serialDriver.h"
 #include "LUT.h"
 
+/**	@defgroup Telegesis Firmware Revisions
+ * @{
+ */
+#define R308	"R308"
+#define CICIE	"CICIE"
+
+/** @} */
+
 /*ZigBee types*/
 
 
