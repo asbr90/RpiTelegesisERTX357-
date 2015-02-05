@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+struct nlist *errorEntry;
 /* insert new entry in the linked list (insert right)*/
 void listPANInsert(nodes **list, int channel, char* PID, char* EPID,
 		int stackProfile, int joinPermission) {

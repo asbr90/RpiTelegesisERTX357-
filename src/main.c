@@ -47,9 +47,9 @@ int main() {
 	printf("%d\n", list_pan->joinPermission);
 */
 	//printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
-	printf("%s\n", JoinNetwork(&zigbee));
-	printf("Display: %s \n", DisplayNetworkInformation());
-	printf("Change Channel: %s\n",ChangeNetworkChannel("1A"));
+	//printf("%s\n", JoinNetwork(&zigbee));
+	//printf("Display: %s \n", DisplayNetworkInformation());
+	//printf("Change Channel: %s\n",ChangeNetworkChannel("1A"));
 	return 0;
 }
 

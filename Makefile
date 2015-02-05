@@ -1,7 +1,7 @@
 CC=gcc
-CFLAGS=-c  -Wall -ggdb -I/usr/local/include 
+CFLAGS=-c  -Wall -ggdb -I/usr/local/include -I ./Middleware/inc -I ./Hardware/inc 
 LDFLAGS=-L/usr/local/lib -lwiringPi
-SOURCES= src/serialDriver.c  src/main.c src/ATParser.c src/ETRX357.c src/LUT.c src/PhilipsHUE.c
+SOURCES= Hardware/src/serialDriver.c  src/main.c Middleware/src/ATParser.c Middleware/src/ETRX357.c Middleware/src/LUT.c Middleware/src/PhilipsHUE.c
 DISTDIR= bin/
 ODIR=obj
 SDIR=src
@@ -14,7 +14,7 @@ $(EXECUTABLE): $(OBJECTS)
 	mkdir -p $(ODIR)
 	mkdir -p $(DISTDIR)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $(DISTDIR)$@
-	mv $(SDIR)/*.o obj
+	mv $(SDIR)/*.o $(ODIR)
 	
 .c.o:   
 	$(CC) $(CFLAGS) $< -o $@
