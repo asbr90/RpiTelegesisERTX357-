@@ -15,12 +15,6 @@
 #include "serialDriver.h"
 #include "LUT.h"
 
-/**	@defgroup Telegesis Firmware Revisions
- * @{
- */
-#define R308	"R308"
-#define CICIE	"CICIE"
-
 /** @} */
 
 /*ZigBee types*/
@@ -30,7 +24,7 @@
  *  @{
  */
 
-/*Module control and configuratio*/
+/*Module control and configuration*/
 #define ATI				"ATI"			/**<Display Product Identification Information*/
 #define ATZ 			"ATZ"			/**<Software Reset*/
 #define ATF 			"AT&F" 			/**<Restore Factory Defaults*/
@@ -116,7 +110,7 @@ static char* error[] = { "00", "01", "02", "04", "05", "06", "07", "08", "09",
 
 /*Error codes as text*/
 static char* error_list[] = { "Everything OK - Success",
-		"Couldn’t poll Parent because of Timeout", "Unknown command",
+		"Could not poll Parent because of Timeout", "Unknown command",
 		"Invalid S-Register", "Invalid parameter",
 		"Recipient could not be reached", "Message was not acknowledged",
 		"No sink known", "Address Table entry is in use and cannot be modified",
@@ -201,6 +195,32 @@ extern struct nlist *errorEntry;	/**< list of error entries */
  	#define ENTERINGBLOAD "ENTERING BLOAD"
 /** @} */ // end of prompt overview
 
+typedef struct sRegister{
+	char* s00;	/**<ChannelMask*/
+	char* s01;	/**<TransmitPowerLevel*/
+	char* s02;	/**<PreferredPANID*/
+	char* s03;	/**<PreferredExtendedPANID*/
+	char* s04;	/**<LocalEUI*/
+	char* s05;	/**<Local NodeID*/
+	char* s06;	/**<Parents EUI*/
+	char* s07;	/**<Parents NodeID*/
+	char* s08;	/**<Network Key*/
+	char* s09;	/**<Link Key */
+	char* s0a;	/**<Main Function */
+	char* s0b;	/**<User Readable Name*/
+	char* s0c;	/**Password */
+	char* s0d;	/**Device information*/
+	char* s0f;	/**<Prompt Enable*/
+	char* s12;	/**<UART Setup */
+	char* s60;	/**<Manufacturer Code*/
+	char* s61;	/**<IAS Enrol Control*/
+	char* s62;	/**<OTA Upgrade Control*/
+	char* s63;	/**<Enable RSSI and LQI printing*/
+	char* s64;	/**<Licence Code */
+	char* s65;	/**<Protocol ID*/
+	char* s66;	/**<Server Tunnel ID*/
+}sreg_t;
+
 /**
  * ZigBee structure
  */
@@ -216,7 +236,8 @@ typedef struct struct_zigbee {
 	char* PID; /**<Personal Area Network ID (PANID)*/
 	char* EPID; /**<Extended Personal Area Network ID (EPID)*/
 	char* stackProfile; /**<The Zigbee stack profile*/
-	char* clusterList;	/**< list of 16 bit cluster identifiers in hexadecimal representation */ // TODO cluster linked list 
+	char* clusterList;	/**< list of 16 bit cluster identifiers in hexadecimal representation */ // TODO cluster linked list
+	sreg_t sreg;	/**<The S-Registers used in this firmware are summarized in the @see struct sRegister*/
 } zigbee_t;
 
 /**
