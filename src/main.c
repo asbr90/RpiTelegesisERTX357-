@@ -28,10 +28,10 @@ int main() {
 	printf("%s\n", productInfo.deviceName);
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
-	//changeONOFFState("0001","0B",TOGGLE);
-	SwtichingTargetDevices("0001,0B,1,0");
-	//changeColor("717E","0B","a9");
-	//moveToLevel("717E","0B","0a");
+
+//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
+	//changeColor("0001","0B","55",SEND_TO_GROUP);
+	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
 
 	/*	error_code = EstablishPAN(&zigbee);
 

@@ -21,8 +21,14 @@
 #define ON		"01"
 #define TOGGLE	"02"
 
-void changeONOFFState(char*, char*, char*);
-void changeColor(char*, char*, char*);
-void moveToLevel(char*, char*, char*);
+#define OFF_GROUP	"0"
+#define ON_GROUP	"1"
+
+#define SEND_TO_GROUP	"1"
+#define SEND_TO_TARGET	"0"
+
+void changeONOFFState(char*, char*, char*, char*);
+void changeColor(char*, char*, char*, char*);
+void moveToLevel(char*, char*, char*, char*);
 
 #endif /*end define PHILIPSHUE_H_*/

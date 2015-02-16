@@ -15,11 +15,9 @@
 #include "serialDriver.h"
 #include "LUT.h"
 
-
 /** @} */
 
 /*ZigBee types*/
-
 
 /** @defgroup commands AT Commands for CICIE
  *  @{
@@ -98,8 +96,9 @@
 
 #define GPADD		"AT+GPADD"	/**<Add Group On Target Device */
 #define RONOFF		"AT+RONOFF"	/**<Switching Target Devices Between ‘On’ and ‘Off’ States*/
+#define CCMVTOHUE	"AT+CCMVTOHUE"	/**<Colour Control Move to Hue Command*/
+#define LCMVTOLEV		"AT+LCMVTOLEV"	/**< Move To Leve*/
 /** @} */ // end of error code
-
 /** @defgroup error List of error codes
  *  @{
  */
@@ -110,8 +109,8 @@ static char* error[] = { "00", "01", "02", "04", "05", "06", "07", "08", "09",
 		"20", "25", "27", "28", "2C", "2D", "33", "34", "35", "39", "6C", "70",
 		"72", "74", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
 		"91", "93", "94", "96", "98", "A1", "AB", "AC", "AD", "AE", "AF", "C5",
-		"C7", "C8" ,"80","81","82","83","84", "85", "86", "87", "88", "89", "8A",
-		"8B", "8C", "8D"};
+		"C7", "C8", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
+		"8A", "8B", "8C", "8D" };
 
 /*Error codes as text*/
 static char* error_list[] = { "Everything OK - Success",
@@ -146,88 +145,89 @@ static char* error_list[] = { "Everything OK - Success",
 		"Trying to join, but no beacons could be heard",
 		"Network key was sent in the clear when trying to join secured",
 		"Did not receive Network Key", "No Link Key received",
-		"Preconfigured Key Required", "NWK Already Present", "NWK Table Full", "NWK Unknown Device",
-		"Malformed Command","Unsupported Cluster Command","Unsupported General Command","Unsupported Manufacturer Cluster Command",
-		"Unsupported Manufacturer General Command","Invalid Field","Unsupported Attribute","Invalid Value","Read Only","Insufficient Space",
-		"Duplicate Exists","Not Found","Unreportable Attribute","Invalid Data Type"};
+		"Preconfigured Key Required", "NWK Already Present", "NWK Table Full",
+		"NWK Unknown Device", "Malformed Command",
+		"Unsupported Cluster Command", "Unsupported General Command",
+		"Unsupported Manufacturer Cluster Command",
+		"Unsupported Manufacturer General Command", "Invalid Field",
+		"Unsupported Attribute", "Invalid Value", "Read Only",
+		"Insufficient Space", "Duplicate Exists", "Not Found",
+		"Unreportable Attribute", "Invalid Data Type" };
 
-extern struct nlist *errorEntry;	/**< list of error entries */
+extern struct nlist *errorEntry; /**< list of error entries */
 
- /** @} */ // end of error code
-
+/** @} */ // end of error code
 /** @defgroup sregister S-Registers
  *  This are S-Registers
  *  @{
  */
 
- /** @} */ // end of s-register
-
+/** @} */// end of s-register
 /** @defgroup prompt Prompt Overview
  *  The following prompts can show up during the operation of the ETRXn modules. Most of the
  *	prompts can be disabled using register S0E and S0F
  *  @{
  */
 
-	#define OK			"OK"
-	#define ERROR 		"ERROR"
-	#define ACK			"ACK"
-	#define NACK		"NACK"
-	#define LEFTPAN		"LeftPAN"
-	#define LOSTPAN		"LostPAN"
-	#define SR 			"SR"
-	#define BCAST 		"BCAST"
-	#define MCAST 		"MCAST"
-	#define SDATA		"STDATA"
-	#define FN0130		"FN0130"
-	#define FFD			"FFD"
- 	#define SED 		"SED"
- 	#define MED 		"MED"
- 	#define ZED 		"ZED"
- 	#define NEWNODE		"NEWNODE"
- 	#define JPAN		"JPAN"
- 	#define SINK 		"SINK"
- 	#define ADSK		"ADSK"
- 	#define SREAD 		"SREAD"
- 	#define SWRITE		"SWRITE"
- 	#define BIND 		"Bind"
- 	#define UNBIND		"Unbind"
- 	#define DATAMODE	"DataMode"
- 	#define OPEN 		"OPEN"
- 	#define CLOSED		"CLOSED"
- 	#define TRACK		"TRACK"
- 	#define TRACK2		"TRACK2"
- 	#define PWRCHANGE	"PWRCHANGE"
- 	#define ADDRRESP	"AddrResp"
- 	#define RX		"RX"
- 	#define NM 		"NM"
- 	#define ENTERINGBLOAD "ENTERING BLOAD"
+#define OK			"OK"
+#define ERROR 		"ERROR"
+#define ACK			"ACK"
+#define NACK		"NACK"
+#define LEFTPAN		"LeftPAN"
+#define LOSTPAN		"LostPAN"
+#define SR 			"SR"
+#define BCAST 		"BCAST"
+#define MCAST 		"MCAST"
+#define SDATA		"STDATA"
+#define FN0130		"FN0130"
+#define FFD			"FFD"
+#define SED 		"SED"
+#define MED 		"MED"
+#define ZED 		"ZED"
+#define NEWNODE		"NEWNODE"
+#define JPAN		"JPAN"
+#define SINK 		"SINK"
+#define ADSK		"ADSK"
+#define SREAD 		"SREAD"
+#define SWRITE		"SWRITE"
+#define BIND 		"Bind"
+#define UNBIND		"Unbind"
+#define DATAMODE	"DataMode"
+#define OPEN 		"OPEN"
+#define CLOSED		"CLOSED"
+#define TRACK		"TRACK"
+#define TRACK2		"TRACK2"
+#define PWRCHANGE	"PWRCHANGE"
+#define ADDRRESP	"AddrResp"
+#define RX		"RX"
+#define NM 		"NM"
+#define ENTERINGBLOAD "ENTERING BLOAD"
 /** @} */ // end of prompt overview
-
-typedef struct sRegister{
-	char* s00;	/**<ChannelMask*/
-	char* s01;	/**<TransmitPowerLevel*/
-	char* s02;	/**<PreferredPANID*/
-	char* s03;	/**<PreferredExtendedPANID*/
-	char* s04;	/**<LocalEUI*/
-	char* s05;	/**<Local NodeID*/
-	char* s06;	/**<Parents EUI*/
-	char* s07;	/**<Parents NodeID*/
-	char* s08;	/**<Network Key*/
-	char* s09;	/**<Link Key */
-	char* s0a;	/**<Main Function */
-	char* s0b;	/**<User Readable Name*/
-	char* s0c;	/**Password */
-	char* s0d;	/**Device information*/
-	char* s0f;	/**<Prompt Enable*/
-	char* s12;	/**<UART Setup */
-	char* s60;	/**<Manufacturer Code*/
-	char* s61;	/**<IAS Enrol Control*/
-	char* s62;	/**<OTA Upgrade Control*/
-	char* s63;	/**<Enable RSSI and LQI printing*/
-	char* s64;	/**<Licence Code */
-	char* s65;	/**<Protocol ID*/
-	char* s66;	/**<Server Tunnel ID*/
-}sreg_t;
+typedef struct sRegister {
+	char* s00; /**<ChannelMask*/
+	char* s01; /**<TransmitPowerLevel*/
+	char* s02; /**<PreferredPANID*/
+	char* s03; /**<PreferredExtendedPANID*/
+	char* s04; /**<LocalEUI*/
+	char* s05; /**<Local NodeID*/
+	char* s06; /**<Parents EUI*/
+	char* s07; /**<Parents NodeID*/
+	char* s08; /**<Network Key*/
+	char* s09; /**<Link Key */
+	char* s0a; /**<Main Function */
+	char* s0b; /**<User Readable Name*/
+	char* s0c; /**Password */
+	char* s0d; /**Device information*/
+	char* s0f; /**<Prompt Enable*/
+	char* s12; /**<UART Setup */
+	char* s60; /**<Manufacturer Code*/
+	char* s61; /**<IAS Enrol Control*/
+	char* s62; /**<OTA Upgrade Control*/
+	char* s63; /**<Enable RSSI and LQI printing*/
+	char* s64; /**<Licence Code */
+	char* s65; /**<Protocol ID*/
+	char* s66; /**<Server Tunnel ID*/
+} sreg_t;
 
 /**
  * ZigBee structure
@@ -244,8 +244,8 @@ typedef struct struct_zigbee {
 	char* PID; /**<Personal Area Network ID (PANID)*/
 	char* EPID; /**<Extended Personal Area Network ID (EPID)*/
 	char* stackProfile; /**<The Zigbee stack profile*/
-	char* clusterList;	/**< list of 16 bit cluster identifiers in hexadecimal representation */ // TODO cluster linked list
-	sreg_t sreg;	/**<The S-Registers used in this firmware are summarized in the @see struct sRegister*/
+	char* clusterList; /**< list of 16 bit cluster identifiers in hexadecimal representation */ // TODO cluster linked list
+	sreg_t sreg; /**<The S-Registers used in this firmware are summarized in the @see struct sRegister*/
 } zigbee_t;
 
 /**
@@ -257,24 +257,21 @@ typedef struct struct_telegesis {
 	char* EUID;
 } telegesis_t;
 
-
 struct list_pans {
-	int channel;		/**< Represents the channel*/
-	char* PID;			/**< Represents the PAN ID */
-	char* EPID;			/**< Represents the extended PAN ID */ 
-	int stackProfile;	/**< Represents the Zigbee stack profile*/
+	int channel; /**< Represents the channel*/
+	char* PID; /**< Represents the PAN ID */
+	char* EPID; /**< Represents the extended PAN ID */
+	int stackProfile; /**< Represents the Zigbee stack profile*/
 	int joinPermission; /**< indicates wheter the network is allowing additional nodes to join.*/
 	struct list_pans *next;
 };
 
 typedef struct list_pans nodes; /**< Includes a list of scanned PANs */
 
-
 /** @defgroup functions Functions
  *  This are function prototypes
  *  @{
  */
-
 
 /**
  *	@brief	Get the error code.
@@ -291,18 +288,17 @@ char* GetErrorCodeNumber(char*);
 char* GetErrorCodeMessage(char*);
 
 /**
-  *	@brief	Initialize the serial driver
-  *	@return TRUE If the driver has been initialized
-  *	@return FALSE If the driver was not initialized
-  */
+ *	@brief	Initialize the serial driver
+ *	@return TRUE If the driver has been initialized
+ *	@return FALSE If the driver was not initialized
+ */
 short InitializeSerialPort(char*);
 
-
 /**
-  *	@brief	Load needed issues at start. This should be the first function call in 
-  * 		your routine to use this library.
-  *
-  */
+ *	@brief	Load needed issues at start. This should be the first function call in
+ * 		your routine to use this library.
+ *
+ */
 void bootload(void);
 
 /**
@@ -332,67 +328,67 @@ char* EstablishPAN(zigbee_t*);
 char* DisassociateLocalDeviceFromPAN(zigbee_t*);
 
 /**
-  *	@brief	Scan for Active PANs, The node gives a list of all PANs found.
-  *			Scanning for active PANs can take up to 4 seconds.
-  *	@param[in]	node* Is an empty linked list in which the scanned PANs are stored.  
-  *	@return 	OK If everything is fine
-  *	@return 	ERROR:<errorcode> If everything went wrong  	
-  */ 
+ *	@brief	Scan for Active PANs, The node gives a list of all PANs found.
+ *			Scanning for active PANs can take up to 4 seconds.
+ *	@param[in]	node* Is an empty linked list in which the scanned PANs are stored.
+ *	@return 	OK If everything is fine
+ *	@return 	ERROR:<errorcode> If everything went wrong
+ */
 char* ScanForActivePAN(nodes**);
 
 /**
-  *	@brief	Join to Personal Area Network. Joining a PAN can take up to 4 seconds, 
-  *			depending on the number of channels which need scanning.
-  *			This command can only be executed if the local node is not part of a PAN already.
-  *
-  *	@param[in,out]	zigbee_t* Is the struct which store the PAN informations. Only if joining was successfully.
-  *	@return 	OK	If everything went well
-  *	@return		ERROR:<errorcode> If something went wrong
-  */
+ *	@brief	Join to Personal Area Network. Joining a PAN can take up to 4 seconds,
+ *			depending on the number of channels which need scanning.
+ *			This command can only be executed if the local node is not part of a PAN already.
+ *
+ *	@param[in,out]	zigbee_t* Is the struct which store the PAN informations. Only if joining was successfully.
+ *	@return 	OK	If everything went well
+ *	@return		ERROR:<errorcode> If something went wrong
+ */
 char* JoinNetwork(zigbee_t*);
 
 /**
-  *	@brief	Join specific personal area network. This command can only be executed if the local
-  *			node is not part of a PAN already. The command ignores the channel mask register S00 and the PID 
-  *			EPID settings in S02 and S03.
-  *	@param[in,out]	zigbee_t*	Is the struct which store the PAN informations. Only if joining was successfully.
-  *	@return 	OK If everything went well
-  *	@return 	ERROR:<errorcode> If something went wrong
-  *
-  */
+ *	@brief	Join specific personal area network. This command can only be executed if the local
+ *			node is not part of a PAN already. The command ignores the channel mask register S00 and the PID
+ *			EPID settings in S02 and S03.
+ *	@param[in,out]	zigbee_t*	Is the struct which store the PAN informations. Only if joining was successfully.
+ *	@return 	OK If everything went well
+ *	@return 	ERROR:<errorcode> If something went wrong
+ *
+ */
 char* JoinSpecificNetwork(zigbee_t*);
 
 /**
-  *	@brief	Only display network information.
-  * @return NoPAN If could not find any network
-  *	@return OK If found any network
-  *
-  */
+ *	@brief	Only display network information.
+ * @return NoPAN If could not find any network
+ *	@return OK If found any network
+ *
+ */
 char* DisplayNetworkInformation(void);
 
 /**
-  *	@brief	Rejoin the network. Polling a parent on an end device that has lost its parent will
-  *			automatically call AT+REJOIN:1. Use on: all  devices expect coordinator (COO). 
-  *			
-  *			If the contact with the network has been lost because an end device hast lost its parent,
-  *			the network has changed channel, or updated it encryption key the command can be used
-  *			to rejoin the network.
-  *	@param[in]	If is set to 0 join without the known network key (unencrypted) and if is set to 1 join encrypted.
-  *	@return 	OK If everything went well
-  *	@return 	ERROR:<errorcode> If something went wrong
-  */
+ *	@brief	Rejoin the network. Polling a parent on an end device that has lost its parent will
+ *			automatically call AT+REJOIN:1. Use on: all  devices expect coordinator (COO).
+ *
+ *			If the contact with the network has been lost because an end device hast lost its parent,
+ *			the network has changed channel, or updated it encryption key the command can be used
+ *			to rejoin the network.
+ *	@param[in]	If is set to 0 join without the known network key (unencrypted) and if is set to 1 join encrypted.
+ *	@return 	OK If everything went well
+ *	@return 	ERROR:<errorcode> If something went wrong
+ */
 char* RejoinNetwork(char*);
 
 /**
-  *	@brief	Change the network's channel. Ask all nodes in the network to change their channel.
-  *			If no channel is specified a danrom channel out of the channels masked in S00 is picked
-  *			which wasn't previously blacklisted because of excessive packet loss.
-  *
-  *			Use on: Network Manager.
-  *	@param[in]	distance in dB. Is an optional parameter. It's ranging from 0B to 1A. 
-  *	@return 	OK If everything went well
-  * @retrun 	ERROR:<errorcode> If something went wrong 	
-  */
+ *	@brief	Change the network's channel. Ask all nodes in the network to change their channel.
+ *			If no channel is specified a danrom channel out of the channels masked in S00 is picked
+ *			which wasn't previously blacklisted because of excessive packet loss.
+ *
+ *			Use on: Network Manager.
+ *	@param[in]	distance in dB. Is an optional parameter. It's ranging from 0B to 1A.
+ *	@return 	OK If everything went well
+ * @retrun 	ERROR:<errorcode> If something went wrong
+ */
 char* ChangeNetworkChannel(char* dB);
 
 /**
@@ -400,7 +396,7 @@ char* ChangeNetworkChannel(char* dB);
  * AT+RAWZCL:<NodeID>,<EP>,<ClusterID>,<data>. For more information about payload see data sheet.
  * @param payload
  */
-char* SendRAWZCLMessagetoTarget(char* );
+char* SendRAWZCLMessagetoTarget(char*);
 
 /**
  * @brief This command requests the target node to respond by listing its neighbour table starting from the requested
@@ -421,10 +417,9 @@ void DisplayNeighbourTable(char*);
 char* AddGroupOnTargetDevice(char*);
 char* SwtichingTargetDevices(char*);
 char* ColourControlMovetoHue(char*);
+char* LevelControlCluster(char*);
 /** @} */ // CFS
 
-
- /** @} */ // end of functions
-
+/** @} */// end of functions
 
 #endif

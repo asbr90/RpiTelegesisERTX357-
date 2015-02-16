@@ -371,7 +371,39 @@ char* SwtichingTargetDevices(char* payload) {
 
 	serialTransmit(cmd);
 	promptRequest(cmd);
-//	delay(4000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	delay(1000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+char* ColourControlMovetoHue(char* payload) {
+	char response[255];
+	char* cmd = concatCommand(CCMVTOHUE, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(1000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+char* LevelControlCluster(char* payload){
+	char response[255];
+	char* cmd = concatCommand(LCMVTOLEV, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(1000); // this is the max scanning time. Hint: could be change to interrupt handling?!
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
 
