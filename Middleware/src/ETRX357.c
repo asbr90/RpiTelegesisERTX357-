@@ -318,19 +318,19 @@ char* ChangeNetworkChannel(char* dB) {
 	}
 }
 
-void DisplayNeighbourTable(char* payload){
+void DisplayNeighbourTable(char* payload) {
 	char response[255];
-		char* cmd = concatCommand(ATNTABLE, payload);
+	char* cmd = concatCommand(ATNTABLE, payload);
 
-		serialTransmit(cmd);
-		promptRequest(cmd);
-		delay(4000);// this is the max scanning time. Hint: could be change to interrupt handling?!
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(4000); // this is the max scanning time. Hint: could be change to interrupt handling?!
 
-		sprintf(response, "%s", serialReceive());
-		promptResponse(response);
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
 
-		if (IsError(response) != NULL)
-			printf("%s\n",GetErrorCodeMessage(GetErrorCodeNumber(response)));
+	if (IsError(response) != NULL)
+		printf("%s\n", GetErrorCodeMessage(GetErrorCodeNumber(response)));
 }
 
 char* SendRAWZCLMessagetoTarget(char* payload) {
@@ -339,7 +339,7 @@ char* SendRAWZCLMessagetoTarget(char* payload) {
 
 	serialTransmit(cmd);
 	promptRequest(cmd);
-	delay(4000);// this is the max scanning time. Hint: could be change to interrupt handling?!
+	delay(4000); // this is the max scanning time. Hint: could be change to interrupt handling?!
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
 

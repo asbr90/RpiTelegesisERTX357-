@@ -12,11 +12,15 @@
 
 #include "ETRX357.h"
 
-/**
- * @brief	Scan Personal Area Network for ZigBee devices. The communication protocol will be ZigBee.
- * 			It is possible to find other devices as like as Philips Hue.
- *
- */
-void scanNetwork(void);
+#define BASICCLUSTER	"0000"
+#define ONOFCLUSTER		"0006"
+#define COLORCLUSTER	"0300"
+
+#define OFF 	"00"
+#define ON		"01"
+#define TOGGLE	"02"
+
+void changeONOFFState(char*, char*, char*);
+void changeColor(char*, char*, char*);
 
 #endif /*end define PHILIPSHUE_H_*/

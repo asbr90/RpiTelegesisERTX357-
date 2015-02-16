@@ -28,7 +28,8 @@ int main() {
 	printf("%s\n", productInfo.deviceName);
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
-	scanNetwork();
+	changeONOFFState("717E","0B",TOGGLE);
+	changeColor("717E","0B","a9");
 /*	error_code = EstablishPAN(&zigbee);
 
 	if (error_code != (char*) OK)
@@ -40,8 +41,9 @@ int main() {
 	}
 */
 //	ScanForActivePAN(&list_pan);
-	DisplayNeighbourTable("00,0000");
-	SendRAWZCLMessagetoTarget("717E,0B,0006,010002");
+	//DisplayNeighbourTable("00,0000");
+//	SendRAWZCLMessagetoTarget("717E,0B,0006,010002");
+
 /*	printf("%d\n", list_pan->channel);
 	printf("%s\n", list_pan->PID);
 	printf("%s\n", list_pan->EPID);

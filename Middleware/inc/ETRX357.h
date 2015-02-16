@@ -401,7 +401,23 @@ char* ChangeNetworkChannel(char* dB);
  */
 char* SendRAWZCLMessagetoTarget(char* );
 
+/**
+ * @brief This command requests the target node to respond by listing its neighbour table starting from the requested
+ * index. Can be used to find the identity of all ZigBee devices in the network including non-Telegesis devices.
+ * The Command which is send: AT+NTABLE:XX,<address>
+ * @param	payload  Where XX is the start index of the remote LQI table and <address> can be the remote node’s EUI64, NodeID or address table entry.
+ */
 void DisplayNeighbourTable(char*);
+
+/** @defgroup CFSC CFS
+ *  This section introduces the ZCL commands supported by the combined interface
+ *  @{
+ */
+char* AddGroupOnTargetDevice(char*);
+char* ColourControlMovetoHue(char*);
+/** @} */ // CFS
+
+
  /** @} */ // end of functions
 
 
