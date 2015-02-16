@@ -96,7 +96,8 @@
 #define ATBIND			"AT+BIND"		/**<Create Binding on Remote Device*/
 #define ATUNBIND		"AT+UNBIND"		/**<Delete Binding on Remote Device*/
 
-
+#define GPADD		"AT+GPADD"	/**<Add Group On Target Device */
+#define RONOFF		"AT+RONOFF"	/**<Switching Target Devices Between ‘On’ and ‘Off’ States*/
 /** @} */ // end of error code
 
 /** @defgroup error List of error codes
@@ -413,7 +414,12 @@ void DisplayNeighbourTable(char*);
  *  This section introduces the ZCL commands supported by the combined interface
  *  @{
  */
+
+/**
+ * @brief	Add Group On Target Device.
+ */
 char* AddGroupOnTargetDevice(char*);
+char* SwtichingTargetDevices(char*);
 char* ColourControlMovetoHue(char*);
 /** @} */ // CFS
 
