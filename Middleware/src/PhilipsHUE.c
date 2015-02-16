@@ -6,10 +6,29 @@
 
 #include "PhilipsHUE.h"
 
+char* constructDataForLevel(char* frame, char* seqNumber,
+		char* commandIdentifier, char* level, char* transitionTime) {
+	char* data;
+	if ((data = malloc(
+			strlen(frame) + strlen(seqNumber) + strlen(commandIdentifier)
+					+ strlen(level) + strlen(transitionTime) + 1)) != NULL) {
+		data[0] = '\0';   // ensures the memory is an empty string
+		strcat(data, frame);
+		strcat(data, seqNumber);
+		strcat(data, commandIdentifier);
+		strcat(data, level);
+		strcat(data, transitionTime);
+	} else {
+		printf("malloc failed\n");
+	}
+
+	return data;
+}
+
 char* constructDataForONOFF(char* frame, char* seqNumber,
 		char* commandIdentifier) {
 	char* data;
-	printf("construct data\n");
+
 	if ((data = malloc(
 			strlen(frame) + strlen(seqNumber) + strlen(commandIdentifier) + 1))
 			!= NULL) {
@@ -20,8 +39,6 @@ char* constructDataForONOFF(char* frame, char* seqNumber,
 	} else {
 		printf("malloc failed\n");
 	}
-
-	printf("Data payload: %s\n", data);
 	return data;
 }
 
@@ -44,13 +61,11 @@ char* constructDataForCOLOR(char* frame, char* seqNumber,
 	} else {
 		printf("malloc failed\n");
 	}
-
-	printf("Data payload: %s\n", data);
 	return data;
 }
 
 void changeColor(char* nodeid, char* endpoint, char* color) {
-	char* data = constructDataForCOLOR("01", "00", "00",color, "00","0500");
+	char* data = constructDataForCOLOR("01", "00", "00", color, "00", "0500");
 	char* payload;
 
 	printf("change state\n");
@@ -69,7 +84,6 @@ void changeColor(char* nodeid, char* endpoint, char* color) {
 	} else {
 		printf("malloc failed\n");
 	}
-	printf("Hue payload: %s\n", payload);
 	SendRAWZCLMessagetoTarget(payload);   //"717E,0B,0006,010002");
 }
 
@@ -87,6 +101,29 @@ void changeONOFFState(char* nodeid, char* endpoint, char* state) {
 		strcat(payload, endpoint);
 		strcat(payload, ",");
 		strcat(payload, ONOFCLUSTER);
+		strcat(payload, ",");
+		strcat(payload, data);
+
+	} else {
+		printf("malloc failed\n");
+	}
+	SendRAWZCLMessagetoTarget(payload);
+}
+
+void moveToLevel(char* nodeid, char* endpoint, char* level) {
+	char* data = constructDataForLevel("01", "00", "00", level, "0500");
+	char* payload;
+
+	printf("change state\n");
+	if ((payload = malloc(
+			strlen(nodeid) + strlen(endpoint) + strlen(LEVELCLUSTER)
+					+ strlen(data) + 1)) != NULL) {
+		payload[0] = '\0';   // ensures the memory is an empty string
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, LEVELCLUSTER);
 		strcat(payload, ",");
 		strcat(payload, data);
 

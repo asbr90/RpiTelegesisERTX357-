@@ -15,6 +15,7 @@
 #define BASICCLUSTER	"0000"
 #define ONOFCLUSTER		"0006"
 #define COLORCLUSTER	"0300"
+#define LEVELCLUSTER	"0008"
 
 #define OFF 	"00"
 #define ON		"01"
@@ -22,5 +23,6 @@
 
 void changeONOFFState(char*, char*, char*);
 void changeColor(char*, char*, char*);
+void moveToLevel(char*, char*, char*);
 
 #endif /*end define PHILIPSHUE_H_*/
