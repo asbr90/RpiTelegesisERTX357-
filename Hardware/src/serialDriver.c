@@ -202,7 +202,6 @@ char* serialReceive(void){
 			//Bytes received
 			rx_buffer[rx_length] = '\0';
 			//printf("%i bytes read : %s\n", rx_length, rx_buffer);
-			
 		}
 	}
 	return &rx_buffer;

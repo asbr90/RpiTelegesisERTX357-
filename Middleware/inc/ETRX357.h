@@ -15,12 +15,13 @@
 #include "serialDriver.h"
 #include "LUT.h"
 
+
 /** @} */
 
 /*ZigBee types*/
 
 
-/** @defgroup commands AT Commands
+/** @defgroup commands AT Commands for CICIE
  *  @{
  */
 
@@ -36,6 +37,8 @@
 #define ATREMS			"ATREMS"		/**<Remote S-Register Access*/
 #define ATSALL			"ATSALL"		/**<Remote S-Register Access*/
 #define ATTOKDUMP		"AT+TOKDUMP" 	/**<Display All S-Registers*/
+#define	ATRAWZCL  		"AT+RAWZCL"		/**<Construct A Raw ZCL Message And Send To Target*/
+#define ATINTERPAN  	"AT+INTERPAN"	/**<Send An Interpan Message*/
 
 /*Network control and configuration*/
 #define ATESCAN 		"AT+ESCAN"		/**<Scan The Energy Of All Channels */
@@ -106,7 +109,8 @@ static char* error[] = { "00", "01", "02", "04", "05", "06", "07", "08", "09",
 		"20", "25", "27", "28", "2C", "2D", "33", "34", "35", "39", "6C", "70",
 		"72", "74", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
 		"91", "93", "94", "96", "98", "A1", "AB", "AC", "AD", "AE", "AF", "C5",
-		"C7", "C8" };
+		"C7", "C8" ,"80","81","82","83","84", "85", "86", "87", "88", "89", "8A",
+		"8B", "8C", "8D"};
 
 /*Error codes as text*/
 static char* error_list[] = { "Everything OK - Success",
@@ -141,7 +145,10 @@ static char* error_list[] = { "Everything OK - Success",
 		"Trying to join, but no beacons could be heard",
 		"Network key was sent in the clear when trying to join secured",
 		"Did not receive Network Key", "No Link Key received",
-		"Preconfigured Key Required", "NWK Already Present", "NWK Table Full", "NWK Unknown Device" };
+		"Preconfigured Key Required", "NWK Already Present", "NWK Table Full", "NWK Unknown Device",
+		"Malformed Command","Unsupported Cluster Command","Unsupported General Command","Unsupported Manufacturer Cluster Command",
+		"Unsupported Manufacturer General Command","Invalid Field","Unsupported Attribute","Invalid Value","Read Only","Insufficient Space",
+		"Duplicate Exists","Not Found","Unreportable Attribute","Invalid Data Type"};
 
 extern struct nlist *errorEntry;	/**< list of error entries */
 
@@ -387,7 +394,14 @@ char* RejoinNetwork(char*);
   */
 char* ChangeNetworkChannel(char* dB);
 
+/**
+ * @brief Construct A RAW ZCL Message and send to Target. The payload looks like
+ * AT+RAWZCL:<NodeID>,<EP>,<ClusterID>,<data>. For more information about payload see data sheet.
+ * @param payload
+ */
+char* SendRAWZCLMessagetoTarget(char* );
 
+void DisplayNeighbourTable(char*);
  /** @} */ // end of functions
 
 

@@ -39,7 +39,9 @@ int main() {
 		printf("EPID: %s\n", zigbee.EPID);
 	}
 */
-	ScanForActivePAN(&list_pan);
+//	ScanForActivePAN(&list_pan);
+	DisplayNeighbourTable("00,0000");
+	SendRAWZCLMessagetoTarget("717E,0B,0006,010002");
 /*	printf("%d\n", list_pan->channel);
 	printf("%s\n", list_pan->PID);
 	printf("%s\n", list_pan->EPID);

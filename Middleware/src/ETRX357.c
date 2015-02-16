@@ -11,6 +11,21 @@
 #include <errno.h>
 
 struct nlist *errorEntry;
+
+char *concatCommand(char* command, char* payload) {
+	char * cmd;
+	if ((cmd = malloc(strlen(":") + strlen(command) + strlen(payload) + 1))
+			!= NULL) {
+		cmd[0] = '\0';   // ensures the memory is an empty string
+		strcat(cmd, command);
+		strcat(cmd, ":");
+		strcat(cmd, payload);
+	} else {
+		printf("malloc failed\n");
+	}
+	return cmd;
+}
+
 /* insert new entry in the linked list (insert right)*/
 void listPANInsert(nodes **list, int channel, char* PID, char* EPID,
 		int stackProfile, int joinPermission) {
@@ -25,7 +40,6 @@ void listPANInsert(nodes **list, int channel, char* PID, char* EPID,
 	new_node->next = *list;
 
 	*list = new_node;
-
 }
 
 /*Prompt output*/
@@ -304,3 +318,34 @@ char* ChangeNetworkChannel(char* dB) {
 	}
 }
 
+void DisplayNeighbourTable(char* payload){
+	char response[255];
+		char* cmd = concatCommand(ATNTABLE, payload);
+
+		serialTransmit(cmd);
+		promptRequest(cmd);
+		delay(4000);// this is the max scanning time. Hint: could be change to interrupt handling?!
+
+		sprintf(response, "%s", serialReceive());
+		promptResponse(response);
+
+		if (IsError(response) != NULL)
+			printf("%s\n",GetErrorCodeMessage(GetErrorCodeNumber(response)));
+}
+
+char* SendRAWZCLMessagetoTarget(char* payload) {
+	char response[255];
+	char* cmd = concatCommand(ATRAWZCL, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(4000);// this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+
+}
