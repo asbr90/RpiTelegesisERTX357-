@@ -98,6 +98,22 @@
 #define RONOFF		"AT+RONOFF"	/**<Switching Target Devices Between ‘On’ and ‘Off’ States*/
 #define CCMVTOHUE	"AT+CCMVTOHUE"	/**<Colour Control Move to Hue Command*/
 #define LCMVTOLEV		"AT+LCMVTOLEV"	/**< Move To Leve*/
+
+#define BASICCLUSTER	"0000"
+#define ONOFCLUSTER		"0006"
+#define COLORCLUSTER	"0300"
+#define LEVELCLUSTER	"0008"
+
+#define OFF 	"00"
+#define ON		"01"
+#define TOGGLE	"02"
+
+#define OFF_GROUP	"0"
+#define ON_GROUP	"1"
+
+#define SEND_TO_GROUP	"1"
+#define SEND_TO_TARGET	"0"
+
 /** @} */ // end of error code
 /** @defgroup error List of error codes
  *  @{
@@ -202,6 +218,7 @@ extern struct nlist *errorEntry; /**< list of error entries */
 #define RX		"RX"
 #define NM 		"NM"
 #define ENTERINGBLOAD "ENTERING BLOAD"
+
 /** @} */ // end of prompt overview
 typedef struct sRegister {
 	char* s00; /**<ChannelMask*/
@@ -406,6 +423,7 @@ char* SendRAWZCLMessagetoTarget(char*);
  */
 void DisplayNeighbourTable(char*);
 
+char* RequestEndpointSimpleDescriptor(char*);
 /** @defgroup CFSC CFS
  *  This section introduces the ZCL commands supported by the combined interface
  *  @{
@@ -414,12 +432,15 @@ void DisplayNeighbourTable(char*);
 /**
  * @brief	Add Group On Target Device.
  */
+
+void changeONOFFState(char*, char*, char*, char*);
+void changeColor(char*, char*, char*, char*);
+void moveToLevel(char*, char*, char*, char*);
+
 char* AddGroupOnTargetDevice(char*);
-char* SwtichingTargetDevices(char*);
+char* SwitchingTargetDevices(char*);
 char* ColourControlMovetoHue(char*);
 char* LevelControlCluster(char*);
 /** @} */ // CFS
-
 /** @} */// end of functions
-
 #endif

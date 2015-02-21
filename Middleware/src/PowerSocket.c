@@ -24,7 +24,7 @@ void changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
 		strcat(payload, ",");
 		strcat(payload, state);
 
-		SwtichingTargetDevices(payload);
+		SwitchingTargetDevices(payload);
 	} else {
 
 		printf("malloc failed\n");

@@ -349,6 +349,42 @@ char* SendRAWZCLMessagetoTarget(char* payload) {
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
 
+
+char* RequestNodesActiveEndpoints(char* payload){
+
+	char response[255];
+	char* cmd = concatCommand(ATACTEPDESC, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(2000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+char* RequestEndpointSimpleDescriptor(char* payload){
+
+	char response[255];
+	char* cmd = concatCommand(ATSIMPLEDESC, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(2000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+
 char* AddGroupOnTargetDevice(char* payload) {
 	char response[255];
 	char* cmd = concatCommand(GPADD, payload);
@@ -365,7 +401,7 @@ char* AddGroupOnTargetDevice(char* payload) {
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
 
-char* SwtichingTargetDevices(char* payload) {
+char* SwitchingTargetDevices(char* payload) {
 	char response[255];
 	char* cmd = concatCommand(RONOFF, payload);
 
@@ -411,4 +447,77 @@ char* LevelControlCluster(char* payload){
 		return (char*) OK;
 	else
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+void changeColor(char* nodeid, char* endpoint, char* color, char* sendmode) {
+	char* payload;
+	if ((payload = malloc(
+			strlen(nodeid) + strlen(endpoint) + strlen(sendmode) + strlen(color)
+					+ 16 + 1)) != NULL) {
+		payload[0] = '\0';   // ensures the memory is an empty string
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, sendmode);
+		strcat(payload, ",");
+		strcat(payload, color);
+		strcat(payload, ",");
+		strcat(payload, "00");
+		strcat(payload, ",");
+		strcat(payload, "0005");
+
+		ColourControlMovetoHue(payload);
+	}
+}
+
+void changeONOFFState(char* nodeid, char* endpoint, char* state, char* sendmode) {
+	char* data;
+	char* payload;
+
+	//send to group node id
+	if ((payload = malloc(
+			strlen(nodeid) + strlen(endpoint) + strlen(sendmode) + strlen(state)
+					+ 1)) != NULL) {
+		payload[0] = '\0';   // ensures the memory is an empty string
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, sendmode);
+		strcat(payload, ",");
+		strcat(payload, state);
+
+		SwitchingTargetDevices(payload);
+	} else {
+
+		printf("malloc failed\n");
+	}
+
+}
+
+void moveToLevel(char* nodeid, char* endpoint, char* levelValue, char* sendmode) {
+	char* payload;
+
+	if ((payload = malloc(
+			strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
+					+ strlen(levelValue) + 128  + 1)) != NULL) {
+
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, sendmode);
+		strcat(payload, ",");
+		strcat(payload, "0");	// It means the command is implemented as Move to Level command
+		strcat(payload, ",");
+		strcat(payload, levelValue);
+		strcat(payload, ",");
+		strcat(payload, "0025");
+
+		LevelControlCluster(payload);
+	}
+	else {
+		printf("malloc failed\n");
+	}
 }
