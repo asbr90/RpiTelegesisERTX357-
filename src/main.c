@@ -21,12 +21,26 @@
 int isDeviceSocket(char* deviceid) {
 	char* ptr = strtok(deviceid, "v");
 
-	if (strcmp(ptr, ONOFF_SWITCH) == 0 || strcmp(ptr, LEVELCONTROL_SWITCH) == 0
+	if ((strcmp(ptr, ONOFF_SWITCH) == 0 || strcmp(ptr, LEVELCONTROL_SWITCH) == 0
 			|| strcmp(ptr, ONOFF_OUTPUT) == 0
 			|| strcmp(ptr, LEVELCONTROLLABLE_OUTPUT) == 0
 			|| strcmp(ptr, RANGE_EXTENDER) == 0
 			|| strcmp(ptr, MAINS_POWER_OUTLET) == 0
-			|| strcmp(ptr, DIMMABLE_LIGHT) == 0)
+			|| strcmp(ptr, DIMMABLE_LIGHT) && ptr != NULL) == 0)
+		return 1;
+	else
+		return 0;
+}
+
+int isDeviceHue(char* deviceid) {
+
+	if (strcmp(deviceid, ONOFFLIGHT) == 0
+			|| strcmp(deviceid, COLORDIMABLELIGHT) == 0
+			|| strcmp(deviceid, ONOFFLIGHTSWITCH) == 0
+			|| strcmp(deviceid, DIMMERSWITCH) == 0
+			|| strcmp(deviceid, COLORDIMERSWITCH) == 0
+			|| strcmp(deviceid, LIGHTSENSOR) == 0
+			|| strcmp(deviceid, OCCUPANCYSENSOR) == 0)
 		return 1;
 	else
 		return 0;
@@ -38,6 +52,7 @@ int main(int argc, char *argv[]) {
 	char buffer[256];
 	struct sockaddr_in serv_addr, cli_addr;
 	sockets *powerSocket = (sockets*) malloc(sizeof(struct Socket_list));
+	hue *hues = (hue*)malloc(sizeof(struct hue_list));
 	char* deviceID;
 
 	telegesis_t productInfo;
@@ -72,8 +87,11 @@ int main(int argc, char *argv[]) {
 				powerSocket->ep, powerSocket->DeviceID,
 				powerSocket->InputCluster);
 
+	} else if (isDeviceHue(deviceID)) {
+		hues->DeviceID = deviceID;
+
 	}
-	//TODO Same as like as for Socket devices
+//TODO Same as like as for Socket devices
 
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");

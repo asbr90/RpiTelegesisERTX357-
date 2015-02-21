@@ -30,9 +30,7 @@ typedef struct Socket_list {
 	char* DeviceID;
 	char* InputCluster;
 	char* OutputCluster;
-
-	//TODO	List structure to saving the power socket information
-	//TODO	split the power socket by company or by other issues?
+	struct Socket_list *nextSocket;
 }sockets;
 
 int getSocketInNetwork(void);

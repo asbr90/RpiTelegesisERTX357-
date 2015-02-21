@@ -6,6 +6,7 @@
 
 #include "PowerSocket.h"
 
+
 void changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
 		char* sendmode) {
 	char* data;
