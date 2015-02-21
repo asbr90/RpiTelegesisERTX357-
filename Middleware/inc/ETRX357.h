@@ -426,8 +426,8 @@ void DisplayNeighbourTable(char*);
 char* RequestEndpointSimpleDescriptor(char*);
 char* getEndPoint(char*);
 char* getProfileID(char*);
-char* getDeviceID(char*);
-char* getInCluster(char*);
+char* getDeviceID(const char*, const char*);
+char* getInCluster(char*, char*);
 char* getOutCluster(char*);
 
 /** @defgroup CFSC CFS

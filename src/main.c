@@ -46,8 +46,10 @@ int main(int argc, char *argv[]) {
 	//RequestEndpointSimpleDescriptor("3a4F,3a4f,01");
 //	RequestNodesActiveEndpoints("3a4f,3a4f");
 	printf("Endpoint: %s\n",getEndPoint("3a4f"));
+	printf("Device ID: %s\n",getDeviceID("3a4f","01"));
+	printf("InCluster: %s\n",getInCluster("3a4f","01"));
 
-	printf("%s\n",RequestEndpointSimpleDescriptor("3a4F,3a4f,01"));
+
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
 		exit(1);

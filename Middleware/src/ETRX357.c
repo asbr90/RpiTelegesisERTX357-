@@ -524,12 +524,11 @@ char* getEndPoint(char* nodeid) {
 	char response[512];
 	char* payload;
 	char* ep;
+	payload = (char*) malloc(2 * sizeof(nodeid) + 2);
 
-	payload = malloc(2 * sizeof(nodeid) + 2);
-
-	strcat(payload,nodeid);
-	strcat(payload,",");
-	strcat(payload,nodeid);
+	strcat(payload, nodeid);
+	strcat(payload, ",");
+	strcat(payload, nodeid);
 
 	char* cmd = concatCommand(ATACTEPDESC, payload);
 
@@ -553,5 +552,70 @@ char* getEndPoint(char* nodeid) {
 	ptr = strtok(NULL, ",");
 	ptr = strtok(NULL, ",");	// last response of actepdesc
 
+	free(payload);
+	return ptr;
+}
+
+char* getDeviceID(const char* nodeid, const char* endpoint) {
+	char* payload;
+	char* simpledesc, *deviceId;
+
+	payload = (char*) malloc(2 * sizeof(nodeid) + 2);
+
+	strcat(payload, nodeid);
+	strcat(payload, ",");
+	strcat(payload, nodeid);
+	strcat(payload, ",");
+	strcat(payload, endpoint);
+
+	printf("Payload: %s\n", payload);
+	simpledesc = RequestEndpointSimpleDescriptor(payload);
+	printf("get Device: %s\n", simpledesc);
+
+	char *ptr = strtok(simpledesc, "\n");
+
+	while (ptr != NULL) {
+		if (strstr(ptr, "DeviceID")) {
+			deviceId = ptr;
+			ptr = NULL;
+		}
+		ptr = strtok(NULL, "\n");
+	}
+	ptr = strtok(deviceId, ":");
+	ptr = strtok(NULL, "\n");
+
+	//free(payload);
+	return ptr;
+}
+
+char* getInCluster(char* nodeid, char* endpoint) {
+	char* payload;
+	char* simpledesc, *incluster;
+
+	payload = (char*) malloc(2 * sizeof(nodeid) + 2);
+
+	strcat(payload, nodeid);
+	strcat(payload, ",");
+	strcat(payload, nodeid);
+	strcat(payload, ",");
+	strcat(payload, endpoint);
+
+	printf("Payload: %s\n", payload);
+	simpledesc = RequestEndpointSimpleDescriptor(payload);
+	printf("get Device: %s\n", simpledesc);
+
+	char *ptr = strtok(simpledesc, "\n");
+
+	while (ptr != NULL) {
+		if (strstr(ptr, "InCluster")) {
+			incluster = ptr;
+			ptr = NULL;
+		}
+		ptr = strtok(NULL, "\n");
+	}
+	ptr = strtok(incluster, ":");
+	ptr = strtok(NULL, "\n");
+
+	//free(payload);
 	return ptr;
 }
