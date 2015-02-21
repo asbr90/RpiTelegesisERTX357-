@@ -590,7 +590,7 @@ char* getInCluster(char* nodeid, char* endpoint) {
 	char* payload;
 	char* simpledesc, *incluster;
 
-	payload = (char*) malloc(2 * sizeof(nodeid) + 2);
+	payload = (char*) malloc(2 * sizeof(nodeid) + 6);
 
 	strcat(payload, nodeid);
 	strcat(payload, ",");
@@ -613,4 +613,52 @@ char* getInCluster(char* nodeid, char* endpoint) {
 
 	//free(payload);
 	return ptr;
+}
+
+char* getManufacturerName(char* nodeid, char* endpoint) {
+	char* payload;
+	char* simpledesc, *deviceId;
+	char response[512];
+	char* restattr;
+
+	payload = (char*) malloc(2 * sizeof(nodeid) + 6);
+
+	strcat(payload, nodeid);
+	strcat(payload, ",");
+	strcat(payload, endpoint);
+	strcat(payload, ",");
+	strcat(payload, "0");
+	strcat(payload, ",");
+	strcat(payload, "0000");
+	strcat(payload, ",");
+	strcat(payload, "0004");
+
+	char* cmd = concatCommand(READATR, payload);
+
+	serialTransmit(cmd);
+	delay(2000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+
+	char *ptr = strtok(response, "\n");
+
+	while (ptr != NULL) {
+		if (strstr(ptr, "RESPATTR")) {
+			restattr = ptr;
+			ptr = NULL;
+		}
+		ptr = strtok(NULL, "\n");
+	}
+
+	ptr = strtok(restattr, ":");
+	ptr = strtok(NULL, ",");
+	ptr = strtok(NULL, ",");
+	ptr = strtok(NULL, ",");
+	ptr = strtok(NULL, ",");
+	ptr = strtok(NULL, ",");
+	ptr = strtok(NULL, ",");
+
+	if (IsError(response) == NULL)
+		return ptr;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }

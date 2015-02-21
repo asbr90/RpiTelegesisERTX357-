@@ -20,13 +20,13 @@
 
 int isDeviceSocket(char* deviceid) {
 	char* ptr = strtok(deviceid, "v");
-
-	if ((strcmp(ptr, ONOFF_SWITCH) == 0 || strcmp(ptr, LEVELCONTROL_SWITCH) == 0
+	printf("%s\n", ptr);
+	if (strcmp(ptr, ONOFF_SWITCH) == 0 || strcmp(ptr, LEVELCONTROL_SWITCH) == 0
 			|| strcmp(ptr, ONOFF_OUTPUT) == 0
 			|| strcmp(ptr, LEVELCONTROLLABLE_OUTPUT) == 0
 			|| strcmp(ptr, RANGE_EXTENDER) == 0
 			|| strcmp(ptr, MAINS_POWER_OUTLET) == 0
-			|| strcmp(ptr, DIMMABLE_LIGHT) && ptr != NULL) == 0)
+			|| strcmp(ptr, DIMMABLE_LIGHT) == 0)
 		return 1;
 	else
 		return 0;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	char buffer[256];
 	struct sockaddr_in serv_addr, cli_addr;
 	sockets *powerSocket = (sockets*) malloc(sizeof(struct Socket_list));
-	hue *hues = (hue*)malloc(sizeof(struct hue_list));
+	hue *hues = (hue*) malloc(sizeof(struct hue_list));
 	char* deviceID;
 
 	telegesis_t productInfo;
@@ -73,25 +73,25 @@ int main(int argc, char *argv[]) {
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
 
-//DisplayNeighbourTable("00,0000");
-//RequestEndpointSimpleDescriptor("3a4F,3a4f,01");
-//	RequestNodesActiveEndpoints("3a4f,3a4f");
-
+	//hier sollten dynamische Endpoints und nodeids stehen. So kann man
+	// beim start schon Devices in die Strukturen schreiben
 	deviceID = getDeviceID("3a4f", "01");
+	printf("Device ID: %s\n", deviceID);
 	if (isDeviceSocket(deviceID)) {
 		//set socket list
+		printf("Device is a socket\n");
 		powerSocket->DeviceID = deviceID;
 		powerSocket->InputCluster = getInCluster("3a4f", "01");
+		powerSocket->ManufacturerName = getManufacturerName("3a4f", "01");
 		powerSocket->ep = getEndPoint("3a4f");
-		printf("Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\n",
+		printf(
+				"Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\nManufacturer Name: %s\n",
 				powerSocket->ep, powerSocket->DeviceID,
-				powerSocket->InputCluster);
+				powerSocket->InputCluster, powerSocket->ManufacturerName);
 
 	} else if (isDeviceHue(deviceID)) {
 		hues->DeviceID = deviceID;
-
 	}
-//TODO Same as like as for Socket devices
 
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");

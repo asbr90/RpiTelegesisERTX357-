@@ -97,7 +97,8 @@
 #define GPADD		"AT+GPADD"	/**<Add Group On Target Device */
 #define RONOFF		"AT+RONOFF"	/**<Switching Target Devices Between ‘On’ and ‘Off’ States*/
 #define CCMVTOHUE	"AT+CCMVTOHUE"	/**<Colour Control Move to Hue Command*/
-#define LCMVTOLEV		"AT+LCMVTOLEV"	/**< Move To Leve*/
+#define LCMVTOLEV	"AT+LCMVTOLEV"	/**< Move To Leve*/
+#define READATR		"AT+READATR"	/**<Read Server Attribute*/
 
 #define BASICCLUSTER	"0000"
 #define ONOFCLUSTER		"0006"
@@ -429,6 +430,7 @@ char* getProfileID(char*);
 char* getDeviceID(const char*, const char*);
 char* getInCluster(char*, char*);
 char* getOutCluster(char*);
+char* getManufacturerName(char*, char*);
 
 /** @defgroup CFSC CFS
  *  This section introduces the ZCL commands supported by the combined interface
