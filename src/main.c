@@ -8,10 +8,25 @@
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include "ETRX357.h"
 #include "PhilipsHUE.h"
 
-int main() {
+void error(const char *msg) {
+	perror(msg);
+	exit(1);
+}
+
+int main(int argc, char *argv[]) {
+	int sockfd, newsockfd, portno;
+	socklen_t clilen;
+	char buffer[256];
+	struct sockaddr_in serv_addr, cli_addr;
+
 	telegesis_t productInfo;
 	zigbee_t zigbee;
 	char* error_code;
@@ -29,10 +44,47 @@ int main() {
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
 
-	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
-	changeColor("0001","0B","55",SEND_TO_GROUP);
-	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
+	int n;
+	if (argc < 2) {
+		fprintf(stderr, "ERROR, no port provided\n");
+		exit(1);
+	}
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0)
+		error("ERROR opening socket");
+	
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	portno = atoi(argv[1]);
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = htons(portno);
+	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+		error("ERROR on binding");
+	listen(sockfd, 5);
+	clilen = sizeof(cli_addr);
 
+	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+
+			if (newsockfd < 0)
+				error("ERROR on accept");
+	while(1){
+		bzero(buffer, 256);
+		n = read(newsockfd, buffer, 255);
+		if (n < 0)
+			error("ERROR reading from socket");
+		printf("Server received message from client: %s\n", buffer);
+		n = write(newsockfd, "ACK", 4);
+
+		if (n < 0)
+			error("ERROR writing to socket");
+	}
+	close(newsockfd);
+	close(sockfd);
+
+
+	//	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
+	//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
+	//	changeColor("0001","0B","55",SEND_TO_GROUP);
 	/*	error_code = EstablishPAN(&zigbee);
 
 	 if (error_code != (char*) OK)
