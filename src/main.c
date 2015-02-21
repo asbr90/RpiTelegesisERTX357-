@@ -18,11 +18,27 @@
 #include "HUE.h"
 #include "PowerSocket.h"
 
+int isDeviceSocket(char* deviceid) {
+	char* ptr = strtok(deviceid, "v");
+
+	if (strcmp(ptr, ONOFF_SWITCH) == 0 || strcmp(ptr, LEVELCONTROL_SWITCH) == 0
+			|| strcmp(ptr, ONOFF_OUTPUT) == 0
+			|| strcmp(ptr, LEVELCONTROLLABLE_OUTPUT) == 0
+			|| strcmp(ptr, RANGE_EXTENDER) == 0
+			|| strcmp(ptr, MAINS_POWER_OUTLET) == 0
+			|| strcmp(ptr, DIMMABLE_LIGHT) == 0)
+		return 1;
+	else
+		return 0;
+}
+
 int main(int argc, char *argv[]) {
 	int sockfd, newsockfd, portno;
 	socklen_t clilen;
 	char buffer[256];
 	struct sockaddr_in serv_addr, cli_addr;
+	sockets *powerSocket = (sockets*) malloc(sizeof(struct Socket_list));
+	char* deviceID;
 
 	telegesis_t productInfo;
 	zigbee_t zigbee;
@@ -42,13 +58,22 @@ int main(int argc, char *argv[]) {
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
 
-	//DisplayNeighbourTable("00,0000");
-	//RequestEndpointSimpleDescriptor("3a4F,3a4f,01");
+//DisplayNeighbourTable("00,0000");
+//RequestEndpointSimpleDescriptor("3a4F,3a4f,01");
 //	RequestNodesActiveEndpoints("3a4f,3a4f");
-	printf("Endpoint: %s\n",getEndPoint("3a4f"));
-	printf("Device ID: %s\n",getDeviceID("3a4f","01"));
-	printf("InCluster: %s\n",getInCluster("3a4f","01"));
 
+	deviceID = getDeviceID("3a4f", "01");
+	if (isDeviceSocket(deviceID)) {
+		//set socket list
+		powerSocket->DeviceID = deviceID;
+		powerSocket->InputCluster = getInCluster("3a4f", "01");
+		powerSocket->ep = getEndPoint("3a4f");
+		printf("Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\n",
+				powerSocket->ep, powerSocket->DeviceID,
+				powerSocket->InputCluster);
+
+	}
+	//TODO Same as like as for Socket devices
 
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
@@ -88,9 +113,9 @@ int main(int argc, char *argv[]) {
 	close(newsockfd);
 	close(sockfd);
 
-	//	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
-	//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
-	//	changeColor("0001","0B","55",SEND_TO_GROUP);
+//	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
+//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
+//	changeColor("0001","0B","55",SEND_TO_GROUP);
 	/*	error_code = EstablishPAN(&zigbee);
 
 	 if (error_code != (char*) OK)
@@ -101,21 +126,21 @@ int main(int argc, char *argv[]) {
 	 printf("EPID: %s\n", zigbee.EPID);
 	 }
 	 */
-	//ScanForActivePAN(&list_pan);
-	//DisplayNeighbourTable("00,0000");
-	//AddGroupOnTargetDevice("05A3,0B,0,0001,smartTower");
-	//AddGroupOnTargetDevice("717E,0B,0,0001,smartTower");
-	//SendRAWZCLMessagetoTarget("717E,0B,0006,010002");
+//ScanForActivePAN(&list_pan);
+//DisplayNeighbourTable("00,0000");
+//AddGroupOnTargetDevice("05A3,0B,0,0001,smartTower");
+//AddGroupOnTargetDevice("717E,0B,0,0001,smartTower");
+//SendRAWZCLMessagetoTarget("717E,0B,0006,010002");
 	/*	printf("%d\n", list_pan->channel);
 	 printf("%s\n", list_pan->PID);
 	 printf("%s\n", list_pan->EPID);
 	 printf("%d\n", list_pan->stackProfile);
 	 printf("%d\n", list_pan->joinPermission);
 	 */
-	//printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
-	//printf("%s\n", JoinNetwork(&zigbee));
-	//printf("Display: %s \n", DisplayNetworkInformation());
-	//printf("Change Channel: %s\n",ChangeNetworkChannel("1A"));
+//printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
+//printf("%s\n", JoinNetwork(&zigbee));
+//printf("Display: %s \n", DisplayNetworkInformation());
+//printf("Change Channel: %s\n",ChangeNetworkChannel("1A"));
 	return 0;
 }
 

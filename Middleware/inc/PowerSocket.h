@@ -12,28 +12,28 @@
 #include "ETRX357.h"
 
 //Device Ids
-#define ONOFF_SWITCH	"0x0000"
-#define LEVELCONTROL_SWITCH	"0x0001"
-#define ONOFF_OUTPUT	"0x0002"
-#define	LEVELCONTROLLABLE_OUTPUT	"0x0003"
-#define	RANGE_EXTENDER	"0x0008"
-#define	MAINS_POWER_OUTLET	"0x0009"
-#define	DIMMABLE_LIGHT	"0x0101"
+#define ONOFF_SWITCH	"0000"
+#define LEVELCONTROL_SWITCH	"0001"
+#define ONOFF_OUTPUT	"0002"
+#define	LEVELCONTROLLABLE_OUTPUT	"0003"
+#define	RANGE_EXTENDER	"0008"
+#define	MAINS_POWER_OUTLET	"0009"
+#define	DIMMABLE_LIGHT	"0101"
 
 
 /**
  * @brief	contains a list of all power sockets in the network.
  */
-struct Socket_list {
+typedef struct Socket_list {
 	char* ManufacturerName;
+	char* ep;
 	char* DeviceID;
 	char* InputCluster;
 	char* OutputCluster;
-	char* Endpoint;
 
 	//TODO	List structure to saving the power socket information
 	//TODO	split the power socket by company or by other issues?
-};
+}sockets;
 
 int getSocketInNetwork(void);
 void connectSocketToNetwork(void);	//PJOIN command

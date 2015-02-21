@@ -568,9 +568,7 @@ char* getDeviceID(const char* nodeid, const char* endpoint) {
 	strcat(payload, ",");
 	strcat(payload, endpoint);
 
-	printf("Payload: %s\n", payload);
 	simpledesc = RequestEndpointSimpleDescriptor(payload);
-	printf("get Device: %s\n", simpledesc);
 
 	char *ptr = strtok(simpledesc, "\n");
 
@@ -600,10 +598,7 @@ char* getInCluster(char* nodeid, char* endpoint) {
 	strcat(payload, ",");
 	strcat(payload, endpoint);
 
-	printf("Payload: %s\n", payload);
 	simpledesc = RequestEndpointSimpleDescriptor(payload);
-	printf("get Device: %s\n", simpledesc);
-
 	char *ptr = strtok(simpledesc, "\n");
 
 	while (ptr != NULL) {
