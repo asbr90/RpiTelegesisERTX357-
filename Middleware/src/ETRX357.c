@@ -319,7 +319,7 @@ char* ChangeNetworkChannel(char* dB) {
 }
 
 void DisplayNeighbourTable(char* payload) {
-	char response[255];
+	char response[512];
 	char* cmd = concatCommand(ATNTABLE, payload);
 
 	serialTransmit(cmd);

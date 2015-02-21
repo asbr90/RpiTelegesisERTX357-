@@ -13,9 +13,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+
 #include "ETRX357.h"
 #include "PhilipsHUE.h"
-
+#include "PowerSocket.h"
 
 int main(int argc, char *argv[]) {
 	int sockfd, newsockfd, portno;
@@ -27,6 +28,7 @@ int main(int argc, char *argv[]) {
 	zigbee_t zigbee;
 	char* error_code;
 	nodes* list_pan = NULL;
+	int n;
 
 	list_pan = malloc(sizeof(struct list_pans));
 	list_pan->next = NULL;
@@ -40,8 +42,12 @@ int main(int argc, char *argv[]) {
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
 
-	int n;
-	if (argc < 2) {
+	DisplayNeighbourTable("00,0000");
+	changeONOFFState("3A4F","01","1","0");
+	test();
+	//test();
+	//changeONOFFStateOfSocket("3A4F","01","0","0");
+/*	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
 		exit(1);
 	}
@@ -63,6 +69,8 @@ int main(int argc, char *argv[]) {
 
 	if (newsockfd < 0)
 		perror("ERROR on accept");
+
+
 	while (1) {
 		bzero(buffer, 256);
 		n = read(newsockfd, buffer, 255);
@@ -76,7 +84,7 @@ int main(int argc, char *argv[]) {
 	}
 	close(newsockfd);
 	close(sockfd);
-
+*/
 	//	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
 	//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
 	//	changeColor("0001","0B","55",SEND_TO_GROUP);
