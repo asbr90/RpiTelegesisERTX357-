@@ -349,10 +349,9 @@ char* SendRAWZCLMessagetoTarget(char* payload) {
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
 
+char* RequestNodesActiveEndpoints(char* payload) {
 
-char* RequestNodesActiveEndpoints(char* payload){
-
-	char response[255];
+	char response[512];
 	char* cmd = concatCommand(ATACTEPDESC, payload);
 
 	serialTransmit(cmd);
@@ -367,9 +366,9 @@ char* RequestNodesActiveEndpoints(char* payload){
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
 
-char* RequestEndpointSimpleDescriptor(char* payload){
+char* RequestEndpointSimpleDescriptor(char* payload) {
 
-	char response[255];
+	char response[512];
 	char* cmd = concatCommand(ATSIMPLEDESC, payload);
 
 	serialTransmit(cmd);
@@ -379,11 +378,10 @@ char* RequestEndpointSimpleDescriptor(char* payload){
 	promptResponse(response);
 
 	if (IsError(response) == NULL)
-		return (char*) OK;
+		return response;
 	else
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
-
 
 char* AddGroupOnTargetDevice(char* payload) {
 	char response[255];
@@ -433,7 +431,7 @@ char* ColourControlMovetoHue(char* payload) {
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
 
-char* LevelControlCluster(char* payload){
+char* LevelControlCluster(char* payload) {
 	char response[255];
 	char* cmd = concatCommand(LCMVTOLEV, payload);
 
@@ -501,7 +499,7 @@ void moveToLevel(char* nodeid, char* endpoint, char* levelValue, char* sendmode)
 
 	if ((payload = malloc(
 			strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
-					+ strlen(levelValue) + 128  + 1)) != NULL) {
+					+ strlen(levelValue) + 128 + 1)) != NULL) {
 
 		strcat(payload, nodeid);
 		strcat(payload, ",");
@@ -509,15 +507,51 @@ void moveToLevel(char* nodeid, char* endpoint, char* levelValue, char* sendmode)
 		strcat(payload, ",");
 		strcat(payload, sendmode);
 		strcat(payload, ",");
-		strcat(payload, "0");	// It means the command is implemented as Move to Level command
+		strcat(payload, "0"); // It means the command is implemented as Move to Level command
 		strcat(payload, ",");
 		strcat(payload, levelValue);
 		strcat(payload, ",");
 		strcat(payload, "0025");
 
 		LevelControlCluster(payload);
-	}
-	else {
+	} else {
 		printf("malloc failed\n");
 	}
+}
+
+char* getEndPoint(char* nodeid) {
+
+	char response[512];
+	char* payload;
+	char* ep;
+
+	payload = malloc(2 * sizeof(nodeid) + 2);
+
+	strcat(payload,nodeid);
+	strcat(payload,",");
+	strcat(payload,nodeid);
+
+	char* cmd = concatCommand(ATACTEPDESC, payload);
+
+	serialTransmit(cmd);
+	delay(2000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	char *ptr = strtok(response, "\n");
+
+	while (ptr != NULL) {
+		if (strstr(ptr, "ActEpDesc")) {
+			ep = ptr;
+			ptr = NULL;
+		}
+		ptr = strtok(NULL, "\n");
+	}
+
+	ptr = strtok(ep, ":");
+	ptr = strtok(NULL, ",");
+	ptr = strtok(NULL, ",");
+	ptr = strtok(NULL, ",");	// last response of actepdesc
+
+	return ptr;
 }

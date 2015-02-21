@@ -25,10 +25,11 @@
  * @brief	contains a list of all power sockets in the network.
  */
 struct Socket_list {
-	char* manufacturerName;
-	char* deviceID;
+	char* ManufacturerName;
+	char* DeviceID;
 	char* InputCluster;
 	char* OutputCluster;
+	char* Endpoint;
 
 	//TODO	List structure to saving the power socket information
 	//TODO	split the power socket by company or by other issues?

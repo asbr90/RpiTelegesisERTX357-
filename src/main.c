@@ -43,7 +43,11 @@ int main(int argc, char *argv[]) {
 	printf("%s\n", productInfo.EUID);
 
 	//DisplayNeighbourTable("00,0000");
-	RequestEndpointSimpleDescriptor("3a4F,3a4f,01");
+	//RequestEndpointSimpleDescriptor("3a4F,3a4f,01");
+//	RequestNodesActiveEndpoints("3a4f,3a4f");
+	printf("Endpoint: %s\n",getEndPoint("3a4f"));
+
+	printf("%s\n",RequestEndpointSimpleDescriptor("3a4F,3a4f,01"));
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
 		exit(1);
@@ -63,13 +67,13 @@ int main(int argc, char *argv[]) {
 	clilen = sizeof(cli_addr);
 
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-
+	printf("Server connected");
 	if (newsockfd < 0)
 		perror("ERROR on accept");
 
-
 	while (1) {
 		bzero(buffer, 256);
+		printf("Waiting for request..");
 		n = read(newsockfd, buffer, 255);
 		if (n < 0)
 			perror("ERROR reading from socket");

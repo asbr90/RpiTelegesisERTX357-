@@ -424,23 +424,29 @@ char* SendRAWZCLMessagetoTarget(char*);
 void DisplayNeighbourTable(char*);
 
 char* RequestEndpointSimpleDescriptor(char*);
+char* getEndPoint(char*);
+char* getProfileID(char*);
+char* getDeviceID(char*);
+char* getInCluster(char*);
+char* getOutCluster(char*);
+
 /** @defgroup CFSC CFS
  *  This section introduces the ZCL commands supported by the combined interface
  *  @{
- */
-
-/**
- * @brief	Add Group On Target Device.
  */
 
 void changeONOFFState(char*, char*, char*, char*);
 void changeColor(char*, char*, char*, char*);
 void moveToLevel(char*, char*, char*, char*);
 
+/**
+ * @brief	Add Group On Target Device.
+ */
 char* AddGroupOnTargetDevice(char*);
 char* SwitchingTargetDevices(char*);
 char* ColourControlMovetoHue(char*);
 char* LevelControlCluster(char*);
+
 /** @} */ // CFS
 /** @} */// end of functions
 #endif
