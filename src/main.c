@@ -29,8 +29,8 @@ int main() {
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
 
-//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
-	//changeColor("0001","0B","55",SEND_TO_GROUP);
+	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
+	changeColor("0001","0B","55",SEND_TO_GROUP);
 	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
 
 	/*	error_code = EstablishPAN(&zigbee);
