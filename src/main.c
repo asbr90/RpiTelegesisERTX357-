@@ -44,10 +44,8 @@ int main(int argc, char *argv[]) {
 
 	DisplayNeighbourTable("00,0000");
 	changeONOFFState("3A4F","01","1","0");
-	test();
-	//test();
-	//changeONOFFStateOfSocket("3A4F","01","0","0");
-/*	if (argc < 2) {
+
+	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
 		exit(1);
 	}
@@ -84,7 +82,7 @@ int main(int argc, char *argv[]) {
 	}
 	close(newsockfd);
 	close(sockfd);
-*/
+
 	//	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
 	//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
 	//	changeColor("0001","0B","55",SEND_TO_GROUP);
