@@ -8,6 +8,9 @@
 #ifndef _DRIVER_API_H_
 #define _DRIVER_API_H_
 
+#include "HUE.h"
+#include "PowerSocket.h"
+
 #define CHANGE_SOCKET_STATE_TO	"SocketState"	/**<Change the socket state to declared value. */
 #define CHANGE_HUE_STATE_TO	"HueState"		/**<Change the hue state to declared value*/
 #define GET_SOCKET_INFO	"SocketInformation"	/**<Get the information of the current socket*/
@@ -18,4 +21,12 @@
 
 #define OPEN_NETWORK	"OpenNetwork"		/**<Open the network for 60s. In this time new devices can connect to network*/
 #define ADD_DEVICE_TO_GROUP	"AddToGroup"	/**<Add a device to Group*/
+
+/**
+ * @brief	Function that distinguish the api command.
+ * @param[in]	The parameter should be one of the API commands
+ * @return	Return the api command. If the value is nor defined, it returns NULL.
+ */
+char* distinguishInterface(char*);
+char* changeSocketStateTo(char*, char*, char*, char*);
 #endif

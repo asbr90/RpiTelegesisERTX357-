@@ -34,6 +34,6 @@ typedef struct Socket_list {
 }sockets;
 
 int getSocketInNetwork(void);
-void connectSocketToNetwork(void);	//PJOIN command
+char* connectSocketToNetwork(void);	//PJOIN command
 
 #endif /*POWERSOCKET_H_*/

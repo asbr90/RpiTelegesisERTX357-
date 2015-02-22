@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-c  -ggdb -I/usr/local/include -I ./Middleware/inc -I ./Hardware/inc 
 LDFLAGS=-L/usr/local/lib -lwiringPi
-SOURCES= Hardware/src/serialDriver.c  src/main.c Middleware/src/ATParser.c Middleware/src/ETRX357.c Middleware/src/LUT.c Middleware/src/HUE.c Middleware/src/PowerSocket.c
+SOURCES= Hardware/src/serialDriver.c  src/main.c Middleware/src/ATParser.c Middleware/src/ETRX357.c Middleware/src/LUT.c Middleware/src/HUE.c Middleware/src/PowerSocket.c Middleware/src/DriverAPI.c
 DISTDIR= bin/
 ODIR=obj
 ODIRMID=Middleware/

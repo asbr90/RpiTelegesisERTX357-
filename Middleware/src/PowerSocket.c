@@ -7,7 +7,7 @@
 #include "PowerSocket.h"
 
 
-void changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
+char* changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
 		char* sendmode) {
 	char* data;
 	char* payload;
@@ -25,10 +25,11 @@ void changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
 		strcat(payload, ",");
 		strcat(payload, state);
 
-		SwitchingTargetDevices(payload);
+		return SwitchingTargetDevices(payload);
 	} else {
 
 		printf("malloc failed\n");
+		return "Error: Malloc failed";
 	}
 
 }

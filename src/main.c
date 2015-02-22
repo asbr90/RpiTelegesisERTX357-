@@ -15,8 +15,9 @@
 #include <netinet/in.h>
 
 #include "ETRX357.h"
-#include "HUE.h"
-#include "PowerSocket.h"
+#include "DriverAPI.h"
+
+int sBuffer = 512;
 
 int isDeviceSocket(char* deviceid) {
 	char* ptr = strtok(deviceid, "v");
@@ -49,7 +50,8 @@ int isDeviceHue(char* deviceid) {
 int main(int argc, char *argv[]) {
 	int sockfd, newsockfd, portno;
 	socklen_t clilen;
-	char buffer[256];
+	char buffer[sBuffer];
+	char* api;
 	struct sockaddr_in serv_addr, cli_addr;
 	sockets *powerSocket = (sockets*) malloc(sizeof(struct Socket_list));
 	hue *hues = (hue*) malloc(sizeof(struct hue_list));
@@ -117,16 +119,25 @@ int main(int argc, char *argv[]) {
 		perror("ERROR on accept");
 
 	while (1) {
-		bzero(buffer, 256);
+		bzero(buffer, sBuffer);
 		printf("Waiting for request..");
-		n = read(newsockfd, buffer, 255);
-		if (n < 0)
-			perror("ERROR reading from socket");
-		printf("Server received message from client: %s\n", buffer);
-		n = write(newsockfd, "ACK", 4);
+		n = read(newsockfd, buffer, sBuffer);
 
-		if (n < 0)
-			perror("ERROR writing to socket");
+		if (n < 0) {
+			perror("ERROR reading from socket");
+			n = write(newsockfd, "NACK", 5);
+
+			if (n < 0)
+				perror("ERROR writing to socket");
+		} else {
+			printf("Server received message from client: %s\n", buffer);
+			api = distinguishInterface(buffer);
+			printf("API Command received: %s\n", api);
+			n = write(newsockfd, "ACK", 4);
+
+			if (n < 0)
+				perror("ERROR writing to socket");
+		}
 	}
 	close(newsockfd);
 	close(sockfd);
