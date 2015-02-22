@@ -9,29 +9,19 @@
 char* changeSocketStateTo(char* nodeid, char* endpoint, char* value,
 		char* sendmode) {
 
-	return (char*)changeONOFFStateOfSocket(nodeid, endpoint, value, sendmode);
+	return (char*) changeONOFFStateOfSocket(nodeid, endpoint, value, sendmode);
 }
 
 char* changeHueStateTo(char* nodeid, char* endpoint, char* value) {
 
 }
 
-int callDriverAPIFunction(char* api) {
-
-}
-
 char* distinguishInterface(char* command) {
-	printf("Full command: %s\n",command);
 	char *ptr = strtok(command, "/");
-	printf("command: %s\n",ptr);
-	printf("Command after tokenize: %s\n",command);
+
 	if (strcmp(ptr, CHANGE_SOCKET_STATE_TO) == 0) {
-
 		char* nodeid = strtok(NULL, "/");
-		printf("nodeid:%s\n",nodeid);
 		char* endpoint = strtok(NULL, "/");
-		printf("endpoint:%s\n",endpoint);
-
 		char* value = strtok(NULL, "/");
 		char* sendmode = strtok(NULL, "/");
 
@@ -40,9 +30,15 @@ char* distinguishInterface(char* command) {
 
 	}
 
-	if (strcmp(ptr, CHANGE_HUE_STATE_TO) == 0)
-		return CHANGE_HUE_STATE_TO;
+	if (strcmp(ptr, CHANGE_HUE_STATE_TO) == 0) {
+		char* nodeid = strtok(NULL, "/");
+		char* endpoint = strtok(NULL, "/");
+		char* value = strtok(NULL, "/");
+		char* sendmode = strtok(NULL, "/");
 
+		changeONOFFState(nodeid, endpoint, value, sendmode);
+		return CHANGE_HUE_STATE_TO;
+	}
 	if (strcmp(ptr, GET_SOCKET_INFO) == 0)
 		return GET_SOCKET_INFO;
 

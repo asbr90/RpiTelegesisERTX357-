@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 
 	//hier sollten dynamische Endpoints und nodeids stehen. So kann man
 	// beim start schon Devices in die Strukturen schreiben
-	deviceID = getDeviceID("3a4f", "01");
+	/*deviceID = getDeviceID("3a4f", "01");
 	printf("Device ID: %s\n", deviceID);
 	if (isDeviceSocket(deviceID)) {
 		//set socket list
@@ -95,8 +95,8 @@ int main(int argc, char *argv[]) {
 
 	} else if (isDeviceHue(deviceID)) {
 		hues->DeviceID = deviceID;
-	}
-
+	}*/
+	DisplayNeighbourTable("00,0000");
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
 		exit(1);
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
 	if (newsockfd < 0)
 		perror("ERROR on accept");
 
-//while (1) {
+while (1) {
 		bzero(buffer, sBuffer);
 		printf("Waiting for request..\n");
 		n = read(newsockfd, buffer, sBuffer);
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 			if (n < 0)
 				perror("ERROR writing to socket");
 		}
-//	}
+	}
 	close(newsockfd);
 	close(sockfd);
 
