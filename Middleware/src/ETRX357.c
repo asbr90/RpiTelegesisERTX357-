@@ -89,7 +89,7 @@ short InitializeSerialPort(char* COM) {
 	}
 }
 
-int ProductIdentificationInformation(telegesis_t *info) {
+char* ProductIdentificationInformation(telegesis_t *info) {
 	char response[255];
 
 	serialTransmit(ATI);
@@ -101,7 +101,7 @@ int ProductIdentificationInformation(telegesis_t *info) {
 	info->firmwareRevision = strtok(NULL, "\n");
 	info->EUID = strtok(NULL, "\n");
 
-	return OK;
+	return (char*) OK;
 
 }
 
@@ -524,7 +524,7 @@ char* getEndPoint(char* nodeid) {
 	char response[512];
 	char* payload;
 	char* ep;
-	payload = (char*) malloc(2 * sizeof(nodeid) + 2);
+	payload = (char*) malloc(strlen(nodeid) * sizeof(char) + 2);
 
 	strcat(payload, nodeid);
 	strcat(payload, ",");
@@ -560,7 +560,8 @@ char* getDeviceID(const char* nodeid, const char* endpoint) {
 	char* payload;
 	char* simpledesc, *deviceId;
 
-	payload = (char*) malloc(2 * sizeof(nodeid) + 2);
+	payload = (char*) malloc(
+			(2 * strlen(nodeid) + strlen(endpoint)) * sizeof(char) + 4);
 
 	strcat(payload, nodeid);
 	strcat(payload, ",");
@@ -590,7 +591,7 @@ char* getInCluster(char* nodeid, char* endpoint) {
 	char* payload;
 	char* simpledesc, *incluster;
 
-	payload = (char*) malloc(2 * sizeof(nodeid) + 6);
+	payload = (char*) malloc(2 * strlen(nodeid) * sizeof(char*) + 6);
 
 	strcat(payload, nodeid);
 	strcat(payload, ",");
@@ -621,7 +622,7 @@ char* getManufacturerName(char* nodeid, char* endpoint) {
 	char response[512];
 	char* restattr;
 
-	payload = (char*) malloc(2 * sizeof(nodeid) + 6);
+	payload = (char*) malloc(2 * strlen(nodeid) * sizeof(char) + 6);
 
 	strcat(payload, nodeid);
 	strcat(payload, ",");

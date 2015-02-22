@@ -324,7 +324,7 @@ void bootload(void);
  *	@param	telegesis_t	A pointer with type of telegesis_t. This will save the information here.
  *	@return	Always return OK.
  */
-int ProductIdentificationInformation(telegesis_t*);
+char* ProductIdentificationInformation(telegesis_t*);
 
 /**
  *	@brief	Establish Personal Area Network. The local node becomes a coordinator and

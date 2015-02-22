@@ -47,6 +47,8 @@ int isDeviceHue(char* deviceid) {
 		return 0;
 }
 
+
+
 int main(int argc, char *argv[]) {
 	int sockfd, newsockfd, portno;
 	socklen_t clilen;
@@ -114,13 +116,13 @@ int main(int argc, char *argv[]) {
 	clilen = sizeof(cli_addr);
 
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-	printf("Server connected");
+
 	if (newsockfd < 0)
 		perror("ERROR on accept");
 
-	while (1) {
+//while (1) {
 		bzero(buffer, sBuffer);
-		printf("Waiting for request..");
+		printf("Waiting for request..\n");
 		n = read(newsockfd, buffer, sBuffer);
 
 		if (n < 0) {
@@ -138,7 +140,7 @@ int main(int argc, char *argv[]) {
 			if (n < 0)
 				perror("ERROR writing to socket");
 		}
-	}
+//	}
 	close(newsockfd);
 	close(sockfd);
 

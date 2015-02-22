@@ -6,7 +6,6 @@
 
 #include "PowerSocket.h"
 
-
 char* changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
 		char* sendmode) {
 	char* data;
@@ -14,8 +13,9 @@ char* changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
 
 	//send to group node id
 	if ((payload = malloc(
-			strlen(nodeid) + strlen(endpoint) + strlen(sendmode) + strlen(state)
-					+ 1)) != NULL) {
+			strlen(nodeid) * sizeof(char) + strlen(endpoint) * sizeof(char)
+					+ strlen(sendmode) * sizeof(char)
+					+ strlen(state) * sizeof(char) + 4)) != NULL) {
 		payload[0] = '\0';   // ensures the memory is an empty string
 		strcat(payload, nodeid);
 		strcat(payload, ",");

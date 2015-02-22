@@ -29,4 +29,5 @@
  */
 char* distinguishInterface(char*);
 char* changeSocketStateTo(char*, char*, char*, char*);
+int callDriverAPIFunction(char*);
 #endif
