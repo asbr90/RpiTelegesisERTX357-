@@ -431,6 +431,38 @@ char* ColourControlMovetoHue(char* payload) {
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
 
+char* ColourControlMoveToSaturation(char* payload) {
+	char response[255];
+	char* cmd = concatCommand(CCMVTOSAT, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(1000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+char* ColourControlMovetoHueSaturation(char* payload) {
+	char response[255];
+	char* cmd = concatCommand(CCMVTOHUS, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(1000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
 char* LevelControlCluster(char* payload) {
 	char response[255];
 	char* cmd = concatCommand(LCMVTOLEV, payload);
@@ -447,11 +479,31 @@ char* LevelControlCluster(char* payload) {
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
 
+void changeSaturation(char* nodeid, char* endpoint, char* sat, char* sendmode) {
+	char* payload;
+	if ((payload = malloc(
+			(strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
+					+ strlen(sat)) * sizeof(char) + 12 + 1)) != NULL) {
+		payload[0] = '\0';   // ensures the memory is an empty string
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, sendmode);
+		strcat(payload, ",");
+		strcat(payload, sat);
+		strcat(payload, ",");
+		strcat(payload, "0005");
+
+		ColourControlMoveToSaturation(payload);
+	}
+}
+
 void changeColor(char* nodeid, char* endpoint, char* color, char* sendmode) {
 	char* payload;
 	if ((payload = malloc(
-			strlen(nodeid) + strlen(endpoint) + strlen(sendmode) + strlen(color)
-					+ 16 + 1)) != NULL) {
+			(strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
+					+ strlen(color)) * sizeof(char) + 12 + 1)) != NULL) {
 		payload[0] = '\0';   // ensures the memory is an empty string
 		strcat(payload, nodeid);
 		strcat(payload, ",");

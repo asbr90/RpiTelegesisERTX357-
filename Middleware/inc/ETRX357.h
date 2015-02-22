@@ -99,6 +99,8 @@
 #define CCMVTOHUE	"AT+CCMVTOHUE"	/**<Colour Control Move to Hue Command*/
 #define LCMVTOLEV	"AT+LCMVTOLEV"	/**< Move To Leve*/
 #define READATR		"AT+READATR"	/**<Read Server Attribute*/
+#define CCMVTOSAT	"AT+CCMVTOSAT"	/**<Colour Control Move to Saturation Command*/
+#define CCMVTOHUS	"AT+CCMVTOHUS"	/**<Colour Control Move to Hue Saturation Command*/
 
 #define BASICCLUSTER	"0000"
 #define ONOFCLUSTER		"0006"
@@ -440,7 +442,7 @@ char* getManufacturerName(char*, char*);
 void changeONOFFState(char*, char*, char*, char*);
 void changeColor(char*, char*, char*, char*);
 void moveToLevel(char*, char*, char*, char*);
-
+void changeSaturation(char*, char*, char*, char*);
 /**
  * @brief	Add Group On Target Device.
  */
@@ -448,7 +450,7 @@ char* AddGroupOnTargetDevice(char*);
 char* SwitchingTargetDevices(char*);
 char* ColourControlMovetoHue(char*);
 char* LevelControlCluster(char*);
-
+char* ColourControlMoveToSaturation(char*);
 /** @} */ // CFS
 /** @} */// end of functions
 #endif

@@ -17,6 +17,7 @@
 #define	GET_LIST_OF_DEVICES	"DeviceList"	/**<Get all connected devices in the network*/
 #define CHANGE_HUE_COLOR_TO	"HueColor"		/**<Cahnge the color of hue to declared value*/
 #define CHANGE_HUE_LEVEL_TO	"HueLevel"		/**<Change the level of hue to declared value*/
+#define CHANGE_HUE_SATURATION_TO	"HueSaturation"	/**<Change the saturation of hue*/
 #define CHANGE_HUE_STATE_TO	"HueState"		/**<Change the hue state to declared value*/
 #define OPEN_NETWORK	"OpenNetwork"		/**<Open the network for 60s. In this time new devices can connect to network*/
 #define ADD_DEVICE_TO_GROUP	"AddToGroup"	/**<Add a device to Group*/

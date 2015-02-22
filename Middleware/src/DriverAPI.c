@@ -12,33 +12,25 @@ char* changeSocketStateTo(char* nodeid, char* endpoint, char* value,
 	return (char*) changeONOFFStateOfSocket(nodeid, endpoint, value, sendmode);
 }
 
-char* changeHueStateTo(char* nodeid, char* endpoint, char* value) {
-
-}
-
 char* distinguishInterface(char* command) {
 	char *ptr = strtok(command, "/");
+	// set the parameter for the most of commands. If comands does not need the
+	// value of this will be NULL
+	char* nodeid = strtok(NULL, "/");
+	char* endpoint = strtok(NULL, "/");
+	char* value = strtok(NULL, "/");
+	char* sendmode = strtok(NULL, "/");
 
 	if (strcmp(ptr, CHANGE_SOCKET_STATE_TO) == 0) {
-		char* nodeid = strtok(NULL, "/");
-		char* endpoint = strtok(NULL, "/");
-		char* value = strtok(NULL, "/");
-		char* sendmode = strtok(NULL, "/");
-
 		changeSocketStateTo(nodeid, endpoint, value, sendmode);
 		return CHANGE_SOCKET_STATE_TO;
-
 	}
 
 	if (strcmp(ptr, CHANGE_HUE_STATE_TO) == 0) {
-		char* nodeid = strtok(NULL, "/");
-		char* endpoint = strtok(NULL, "/");
-		char* value = strtok(NULL, "/");
-		char* sendmode = strtok(NULL, "/");
-
 		changeONOFFState(nodeid, endpoint, value, sendmode);
 		return CHANGE_HUE_STATE_TO;
 	}
+
 	if (strcmp(ptr, GET_SOCKET_INFO) == 0)
 		return GET_SOCKET_INFO;
 
@@ -48,12 +40,20 @@ char* distinguishInterface(char* command) {
 	if (strcmp(ptr, GET_LIST_OF_DEVICES) == 0)
 		return GET_LIST_OF_DEVICES;
 
-	if (strcmp(ptr, CHANGE_HUE_COLOR_TO) == 0)
+	if (strcmp(ptr, CHANGE_HUE_COLOR_TO) == 0) {
+		changeColor(nodeid, endpoint, value, sendmode);
 		return CHANGE_HUE_COLOR_TO;
+	}
 
-	if (strcmp(ptr, CHANGE_HUE_LEVEL_TO) == 0)
+	if (strcmp(ptr, CHANGE_HUE_LEVEL_TO) == 0) {
+		moveToLevel(nodeid, endpoint, value, sendmode);
 		return CHANGE_HUE_LEVEL_TO;
+	}
 
+	if(strcmp(ptr, CHANGE_HUE_SATURATION_TO) == 0){
+		changeSaturation(nodeid, endpoint, value, sendmode);
+		return CHANGE_HUE_SATURATION_TO;
+	}
 	if (strcmp(ptr, OPEN_NETWORK) == 0)
 		return OPEN_NETWORK;
 
