@@ -50,16 +50,29 @@ char* distinguishInterface(char* command) {
 		return CHANGE_HUE_LEVEL_TO;
 	}
 
-	if(strcmp(ptr, CHANGE_HUE_SATURATION_TO) == 0){
+	if (strcmp(ptr, CHANGE_HUE_SATURATION_TO) == 0) {
 		changeSaturation(nodeid, endpoint, value, sendmode);
 		return CHANGE_HUE_SATURATION_TO;
 	}
+
 	if (strcmp(ptr, OPEN_NETWORK) == 0)
 		return OPEN_NETWORK;
 
 	if (strcmp(ptr, ADD_DEVICE_TO_GROUP) == 0)
 		return ADD_DEVICE_TO_GROUP;
 
+	if (strcmp(ptr, UPDATE_DEVICE_LIST) == 0) {
+		const char* nTable = DisplayNeighbourTable("00,0000");
+	/*	char* device = strtok(nTable, "\n");
+
+		while(ptr != NULL || strstr(ptr,"No.") == NULL ) {
+			printf("Abschnitt gefunden: %s\n", ptr);
+		 	ptr = strtok(NULL, "\n");
+		}
+*/
+		printf("nTable: \n%s\n",nTable);
+		return UPDATE_DEVICE_LIST;
+	}
 	return NULL;
 }
 

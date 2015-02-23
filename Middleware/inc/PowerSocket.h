@@ -25,6 +25,7 @@
  * @brief	contains a list of all power sockets in the network.
  */
 typedef struct Socket_list {
+	char* NodeID;
 	char* ManufacturerName;
 	char* ep;
 	char* DeviceID;

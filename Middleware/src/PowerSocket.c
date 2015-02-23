@@ -5,6 +5,8 @@
  */
 
 #include "PowerSocket.h"
+sockets *powerSocket;
+//= (sockets*) malloc(sizeof(struct Socket_list));
 
 char* changeONOFFStateOfSocket(char* nodeid, char* endpoint, char* state,
 		char* sendmode) {

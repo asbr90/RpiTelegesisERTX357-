@@ -184,7 +184,7 @@ char* serialReceive(void){
 	//----- CHECK FOR ANY RX BYTES -----
 	// Read up to 512 characters from the port if they are there
 	//TODO	need dynamical change of received cahracters
-	unsigned char rx_buffer[512];
+	unsigned char* rx_buffer = (unsigned char*) malloc(512 * sizeof(char));
 	if (fileDescriptor != -1)
 	{
 		int rx_length = read(fileDescriptor, (void*)rx_buffer, 512);		//Filestream, buffer to store in, number of bytes to read (max)
@@ -205,5 +205,5 @@ char* serialReceive(void){
 			//printf("%i bytes read : %s\n", rx_length, rx_buffer);
 		}
 	}
-	return &rx_buffer;
+	return rx_buffer;
 }

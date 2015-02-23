@@ -318,19 +318,20 @@ char* ChangeNetworkChannel(char* dB) {
 	}
 }
 
-void DisplayNeighbourTable(char* payload) {
-	char response[512];
+const char* DisplayNeighbourTable(char* payload) {
+	char* response = (char*) malloc(512 * sizeof(char));
 	char* cmd = concatCommand(ATNTABLE, payload);
 
 	serialTransmit(cmd);
 	promptRequest(cmd);
-	delay(4000); // this is the max scanning time. Hint: could be change to interrupt handling?!
-
+	delay(1000); // this is the max scanning time. Hint: could be change to interrupt handling?!
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
-
 	if (IsError(response) != NULL)
 		printf("%s\n", GetErrorCodeMessage(GetErrorCodeNumber(response)));
+	else {
+		return (char*) response;
+	}
 }
 
 char* SendRAWZCLMessagetoTarget(char* payload) {
@@ -351,7 +352,7 @@ char* SendRAWZCLMessagetoTarget(char* payload) {
 
 char* RequestNodesActiveEndpoints(char* payload) {
 
-	char response[512];
+	char response[1024];
 	char* cmd = concatCommand(ATACTEPDESC, payload);
 
 	serialTransmit(cmd);
@@ -368,7 +369,7 @@ char* RequestNodesActiveEndpoints(char* payload) {
 
 char* RequestEndpointSimpleDescriptor(char* payload) {
 
-	char response[512];
+	char* response = (char*) malloc(512 * sizeof(char));
 	char* cmd = concatCommand(ATSIMPLEDESC, payload);
 
 	serialTransmit(cmd);
@@ -482,8 +483,8 @@ char* LevelControlCluster(char* payload) {
 void changeSaturation(char* nodeid, char* endpoint, char* sat, char* sendmode) {
 	char* payload;
 	if ((payload = malloc(
-			(strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
-					+ strlen(sat)) * sizeof(char) + 12 + 1)) != NULL) {
+			(strlen(nodeid) + strlen(endpoint) + strlen(sendmode) + strlen(sat))
+					* sizeof(char) + 12 + 1)) != NULL) {
 		payload[0] = '\0';   // ensures the memory is an empty string
 		strcat(payload, nodeid);
 		strcat(payload, ",");

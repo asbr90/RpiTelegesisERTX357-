@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 	printf("%s\n", productInfo.deviceName);
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
-	ColourControlMoveToSaturation("05A3,0B,0,df,0005");
+	//ColourControlMoveToSaturation("05A3,0B,0,df,0005");
 	//hier sollten dynamische Endpoints und nodeids stehen. So kann man
 	// beim start schon Devices in die Strukturen schreiben
 	/*deviceID = getDeviceID("3a4f", "01");
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
 	} else if (isDeviceHue(deviceID)) {
 		hues->DeviceID = deviceID;
 	}*/
-	DisplayNeighbourTable("00,0000");
+	//DisplayNeighbourTable("00,0000");
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
 		exit(1);

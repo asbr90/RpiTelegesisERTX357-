@@ -424,7 +424,7 @@ char* SendRAWZCLMessagetoTarget(char*);
  * The Command which is send: AT+NTABLE:XX,<address>
  * @param	payload  Where XX is the start index of the remote LQI table and <address> can be the remote node’s EUI64, NodeID or address table entry.
  */
-void DisplayNeighbourTable(char*);
+const char* DisplayNeighbourTable(char*);
 
 char* RequestEndpointSimpleDescriptor(char*);
 char* getEndPoint(char*);
