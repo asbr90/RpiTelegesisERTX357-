@@ -84,8 +84,9 @@ int main(int argc, char *argv[]) {
 		} else {
 			printf("Server received message from client: %s\n", buffer);
 			api = distinguishInterface(buffer);
-			printf("API Command received: %s\n", api);
+			printf("API Command received:\n%s\n", buffer);
 			if (strstr(api, UPDATE_DEVICE_LIST)) {
+				printf("Send data to client:\n%s\n",api);
 				n = write(newsockfd, api, strlen(api) + 8);
 				printf("Write to client %d\n", n);
 			} else {

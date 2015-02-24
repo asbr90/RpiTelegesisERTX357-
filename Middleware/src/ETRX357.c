@@ -357,7 +357,7 @@ char* RequestNodesActiveEndpoints(char* payload) {
 
 	serialTransmit(cmd);
 	promptRequest(cmd);
-	delay(2000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	delay(500); // this is the max scanning time. Hint: could be change to interrupt handling?!
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
 
@@ -374,7 +374,7 @@ char* RequestEndpointSimpleDescriptor(char* payload) {
 
 	serialTransmit(cmd);
 	promptRequest(cmd);
-	delay(2000); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	delay(500); // this is the max scanning time. Hint: could be change to interrupt handling?!
 	sprintf(response, "%s", serialReceive());
 	promptResponse(response);
 

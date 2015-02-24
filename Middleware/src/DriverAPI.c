@@ -80,27 +80,29 @@ char* parseID(void) {
 	return id;
 }
 
-char* createResponseSocket(void) {
+char* createResponseSocket(sockets* socketplug) {
+
 	char* response = (char*) malloc(64 * sizeof(char));
 
-	strcat(response, powerSocket->NodeID);
+	printf("Socketinfo: %s\n",socketplug->NodeID);
+	strcat(response, socketplug->NodeID);
 	strcat(response, ":");
-	strcat(response, powerSocket->DeviceID);
+	strcat(response, socketplug->DeviceID);
 	strcat(response, ":");
-	strcat(response, powerSocket->ep);
+	strcat(response, socketplug->ep);
 	strcat(response, "\n");
 
 	return response;
 }
 
-char* createResponseHue(void) {
+char* createResponseHue(hue* hues) {
 	char* response = (char*) malloc(64 * sizeof(char));
 
-	strcat(response, huesList->NodeID);
+	strcat(response, hues->NodeID);
 	strcat(response, ":");
-	strcat(response, huesList->DeviceID);
+	strcat(response, hues->DeviceID);
 	strcat(response, ":");
-	strcat(response, huesList->ep);
+	strcat(response, hues->ep);
 	strcat(response, "\n");
 
 	return response;
@@ -198,28 +200,33 @@ char* distinguishInterface(char* command) {
 			ptr = strtok(NULL, ",");
 			ptr = strtok(NULL, ",");
 			ptr = strtok(NULL, "\n");	// last response of actepdesc
+
 			deviceEndpointList[i] = ptr;
 			deviceID = getDeviceID(deviceIDList[i], deviceEndpointList[i]);
+
 			if (isDeviceSocket(deviceID)) {
 				//set socket list
 				appendSocket(&powerSocket, deviceIDList[i],
-						deviceEndpointList[i],
-						getManufacturerName(deviceIDList[i],
-								deviceEndpointList[i]), deviceID,
+						deviceEndpointList[i]," "
+					/*	getManufacturerName(deviceIDList[i],
+								deviceEndpointList[i])*/, deviceID,
 						getInCluster(deviceIDList[i], deviceEndpointList[i]),
 						"");
 				strcat(responseDL, UPDATE_DEVICE_LIST);
 				strcat(responseDL, "/");
-				strcat(responseDL, createResponseSocket());
+				strcat(responseDL, createResponseSocket(powerSocket));
+				powerSocket = powerSocket->next;
+
 			} else if (isDeviceHue(deviceID)) {
 				appendHue(&huesList, deviceIDList[i], deviceEndpointList[i],
-						getManufacturerName(deviceIDList[i],
-								deviceEndpointList[i]), deviceID,
+						/*getManufacturerName(deviceIDList[i],
+								deviceEndpointList[i])*/" ", deviceID,
 						getInCluster(deviceIDList[i], deviceEndpointList[i]),
 						"");
 				strcat(responseDL, UPDATE_DEVICE_LIST);
 				strcat(responseDL, "/");
-				strcat(responseDL, createResponseHue());
+				strcat(responseDL, createResponseHue(huesList));
+				huesList = huesList->next;
 			}
 		}
 
