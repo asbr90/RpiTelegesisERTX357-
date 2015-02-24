@@ -318,7 +318,7 @@ char* ChangeNetworkChannel(char* dB) {
 	}
 }
 
-const char* DisplayNeighbourTable(char* payload) {
+char* DisplayNeighbourTable(char* payload) {
 	char* response = (char*) malloc(512 * sizeof(char));
 	char* cmd = concatCommand(ATNTABLE, payload);
 
@@ -352,7 +352,7 @@ char* SendRAWZCLMessagetoTarget(char* payload) {
 
 char* RequestNodesActiveEndpoints(char* payload) {
 
-	char response[1024];
+	char* response = (char*) malloc(1024 * sizeof(char));
 	char* cmd = concatCommand(ATACTEPDESC, payload);
 
 	serialTransmit(cmd);
@@ -362,7 +362,7 @@ char* RequestNodesActiveEndpoints(char* payload) {
 	promptResponse(response);
 
 	if (IsError(response) == NULL)
-		return (char*) OK;
+		return response;
 	else
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
@@ -670,12 +670,10 @@ char* getInCluster(char* nodeid, char* endpoint) {
 }
 
 char* getManufacturerName(char* nodeid, char* endpoint) {
-	char* payload;
+	char* payload = (char*) malloc(128*sizeof(char));
 	char* simpledesc, *deviceId;
-	char response[512];
+	char* response = (char*) malloc(512 * sizeof(char));
 	char* restattr;
-
-	payload = (char*) malloc(2 * strlen(nodeid) * sizeof(char) + 6);
 
 	strcat(payload, nodeid);
 	strcat(payload, ",");
@@ -687,12 +685,13 @@ char* getManufacturerName(char* nodeid, char* endpoint) {
 	strcat(payload, ",");
 	strcat(payload, "0004");
 
+	printf(" %s\n",payload);
 	char* cmd = concatCommand(READATR, payload);
 
 	serialTransmit(cmd);
 	delay(2000); // this is the max scanning time. Hint: could be change to interrupt handling?!
 	sprintf(response, "%s", serialReceive());
-
+	promptResponse(response);
 	char *ptr = strtok(response, "\n");
 
 	while (ptr != NULL) {

@@ -19,36 +19,6 @@
 
 int sBuffer = 512;
 
-int isDeviceSocket(char* deviceid) {
-	char* ptr = strtok(deviceid, "v");
-	printf("%s\n", ptr);
-	if (strcmp(ptr, ONOFF_SWITCH) == 0 || strcmp(ptr, LEVELCONTROL_SWITCH) == 0
-			|| strcmp(ptr, ONOFF_OUTPUT) == 0
-			|| strcmp(ptr, LEVELCONTROLLABLE_OUTPUT) == 0
-			|| strcmp(ptr, RANGE_EXTENDER) == 0
-			|| strcmp(ptr, MAINS_POWER_OUTLET) == 0
-			|| strcmp(ptr, DIMMABLE_LIGHT) == 0)
-		return 1;
-	else
-		return 0;
-}
-
-int isDeviceHue(char* deviceid) {
-
-	if (strcmp(deviceid, ONOFFLIGHT) == 0
-			|| strcmp(deviceid, COLORDIMABLELIGHT) == 0
-			|| strcmp(deviceid, ONOFFLIGHTSWITCH) == 0
-			|| strcmp(deviceid, DIMMERSWITCH) == 0
-			|| strcmp(deviceid, COLORDIMERSWITCH) == 0
-			|| strcmp(deviceid, LIGHTSENSOR) == 0
-			|| strcmp(deviceid, OCCUPANCYSENSOR) == 0)
-		return 1;
-	else
-		return 0;
-}
-
-
-
 int main(int argc, char *argv[]) {
 	int sockfd, newsockfd, portno;
 	socklen_t clilen;
@@ -76,27 +46,7 @@ int main(int argc, char *argv[]) {
 	printf("%s\n", productInfo.deviceName);
 	printf("%s\n", productInfo.firmwareRevision);
 	printf("%s\n", productInfo.EUID);
-	//ColourControlMoveToSaturation("05A3,0B,0,df,0005");
-	//hier sollten dynamische Endpoints und nodeids stehen. So kann man
-	// beim start schon Devices in die Strukturen schreiben
-	/*deviceID = getDeviceID("3a4f", "01");
-	printf("Device ID: %s\n", deviceID);
-	if (isDeviceSocket(deviceID)) {
-		//set socket list
-		printf("Device is a socket\n");
-		powerSocket->DeviceID = deviceID;
-		powerSocket->InputCluster = getInCluster("3a4f", "01");
-		powerSocket->ManufacturerName = getManufacturerName("3a4f", "01");
-		powerSocket->ep = getEndPoint("3a4f");
-		printf(
-				"Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\nManufacturer Name: %s\n",
-				powerSocket->ep, powerSocket->DeviceID,
-				powerSocket->InputCluster, powerSocket->ManufacturerName);
 
-	} else if (isDeviceHue(deviceID)) {
-		hues->DeviceID = deviceID;
-	}*/
-	//DisplayNeighbourTable("00,0000");
 	if (argc < 2) {
 		fprintf(stderr, "ERROR, no port provided\n");
 		exit(1);
@@ -120,7 +70,7 @@ int main(int argc, char *argv[]) {
 	if (newsockfd < 0)
 		perror("ERROR on accept");
 
-while (1) {
+	while (1) {
 		bzero(buffer, sBuffer);
 		printf("Waiting for request..\n");
 		n = read(newsockfd, buffer, sBuffer);

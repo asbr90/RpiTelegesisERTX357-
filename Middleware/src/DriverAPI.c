@@ -6,16 +6,84 @@
 
 #include "DriverAPI.h"
 
+int isDeviceSocket(char* deviceid) {
+	char* ptr = strtok(deviceid, "v");
+	printf("%s\n", ptr);
+	if (strcmp(ptr, ONOFF_SWITCH) == 0 || strcmp(ptr, LEVELCONTROL_SWITCH) == 0
+			|| strcmp(ptr, ONOFF_OUTPUT) == 0
+			|| strcmp(ptr, LEVELCONTROLLABLE_OUTPUT) == 0
+			|| strcmp(ptr, RANGE_EXTENDER) == 0
+			|| strcmp(ptr, MAINS_POWER_OUTLET) == 0
+			|| strcmp(ptr, DIMMABLE_LIGHT) == 0)
+		return 1;
+	else
+		return 0;
+}
+
+int isDeviceHue(char* deviceid) {
+
+	if (strcmp(deviceid, ONOFFLIGHT) == 0
+			|| strcmp(deviceid, COLORDIMABLELIGHT) == 0
+			|| strcmp(deviceid, ONOFFLIGHTSWITCH) == 0
+			|| strcmp(deviceid, DIMMERSWITCH) == 0
+			|| strcmp(deviceid, COLORDIMERSWITCH) == 0
+			|| strcmp(deviceid, LIGHTSENSOR) == 0
+			|| strcmp(deviceid, OCCUPANCYSENSOR) == 0
+			|| strcmp(deviceid, DIMMABLE_LIGHT) == 0
+			|| strcmp(deviceid, DimmablePluginUnit) == 0
+			|| strcmp(deviceid, ColourLight) == 0
+			|| strcmp(deviceid, ExtendedColourLight) == 0
+			|| strcmp(deviceid, ExtendedColourLight) == 0)
+		return 1;
+	else
+		return 0;
+}
+
 char* changeSocketStateTo(char* nodeid, char* endpoint, char* value,
 		char* sendmode) {
 
 	return (char*) changeONOFFStateOfSocket(nodeid, endpoint, value, sendmode);
 }
 
+char *trimwhitespace(char *str) {
+	char *end;
+
+// Trim leading space
+	while (isspace(*str))
+		str++;
+
+	if (*str == 0)  // All spaces?
+		return str;
+
+// Trim trailing space
+	end = str + strlen(str) - 1;
+	while (end > str && isspace(*end))
+		end--;
+
+// Write new null terminator
+	*(end + 1) = 0;
+
+	return str;
+}
+
+char* parseID(void) {
+	char* id = (char*) malloc(5 * sizeof(char));
+	int i;
+	char* ptr;
+
+	for (i = 0; i < 4; i++) {
+		if ((ptr = strtok(NULL, "|")) == NULL)
+			return NULL;
+	}
+
+	id = trimwhitespace(ptr);
+	return id;
+}
+
 char* distinguishInterface(char* command) {
 	char *ptr = strtok(command, "/");
-	// set the parameter for the most of commands. If comands does not need the
-	// value of this will be NULL
+// set the parameter for the most of commands. If comands does not need the
+// value of this will be NULL
 	char* nodeid = strtok(NULL, "/");
 	char* endpoint = strtok(NULL, "/");
 	char* value = strtok(NULL, "/");
@@ -62,15 +130,77 @@ char* distinguishInterface(char* command) {
 		return ADD_DEVICE_TO_GROUP;
 
 	if (strcmp(ptr, UPDATE_DEVICE_LIST) == 0) {
-		const char* nTable = DisplayNeighbourTable("00,0000");
-	/*	char* device = strtok(nTable, "\n");
+		char* nTable = DisplayNeighbourTable("00,0000");
+		char* device = strtok(nTable, "\n");
+		char* payloadActiveEndpoint = (char*) malloc(10 * sizeof(char));
+		char* responseActiveEndpoint;
+		char* ptr, *currentptr;
+		char* deviceIDList[100];
+		char* deviceEndpointList[100];
+		char* deviceID;
 
-		while(ptr != NULL || strstr(ptr,"No.") == NULL ) {
-			printf("Abschnitt gefunden: %s\n", ptr);
-		 	ptr = strtok(NULL, "\n");
+		int index = 0, i;
+
+		while ((device != NULL) && (strstr(device, "No.") == NULL))
+			device = strtok(NULL, "\n");
+
+		while ((device = parseID()) != NULL) {
+			strcat(payloadActiveEndpoint, device);
+			strcat(payloadActiveEndpoint, ",");
+			strcat(payloadActiveEndpoint, device);
+
+			printf("payloadActiveEndpoint: %s\n", payloadActiveEndpoint);
+
+			responseActiveEndpoint = RequestNodesActiveEndpoints(
+					payloadActiveEndpoint);
+
+			responseActiveEndpoint = strstr(responseActiveEndpoint,
+					"ActEpDesc");
+
+			printf("responseActiveEndpoint: %s\n", responseActiveEndpoint);
+			deviceIDList[index] = device;
+			deviceEndpointList[index] = responseActiveEndpoint;
+			index++;
+			payloadActiveEndpoint = NULL;
+			payloadActiveEndpoint = (char*) malloc(20 * sizeof(char));
 		}
-*/
-		printf("nTable: \n%s\n",nTable);
+
+		for (i = 0; i < index; i++) {
+			ptr = strtok(deviceEndpointList[i], ":");
+			ptr = strtok(NULL, ",");
+			ptr = strtok(NULL, ",");
+			ptr = strtok(NULL, "\n");	// last response of actepdesc
+			deviceEndpointList[i] = ptr;
+			deviceID = getDeviceID(deviceIDList[i], deviceEndpointList[i]);
+			if (isDeviceSocket(deviceID)) {
+				//set socket list
+				appendSocket(&powerSocket, deviceIDList[i],
+						deviceEndpointList[i],
+						getManufacturerName(deviceIDList[i],
+								deviceEndpointList[i]), deviceID,
+						getInCluster(deviceIDList[i], deviceEndpointList[i]),
+						"");
+				printf("Device is a socket\n");
+				printf(
+						"Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\nManufacturer Name: %s\n",
+						powerSocket->ep, powerSocket->DeviceID,
+						powerSocket->InputCluster,
+						powerSocket->ManufacturerName);
+
+			} else if (isDeviceHue(deviceID)) {
+				appendHue(&huesList, deviceIDList[i], deviceEndpointList[i],
+						getManufacturerName(deviceIDList[i],
+								deviceEndpointList[i]), deviceID,
+						getInCluster(deviceIDList[i], deviceEndpointList[i]),
+						"");
+				printf("Device is a Hue\n");
+				printf(
+						"Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\nManufacturer Name: %s\n",
+						huesList->ep, huesList->DeviceID,
+						huesList->InputCluster, huesList->ManufacturerName);
+			}
+		}
+
 		return UPDATE_DEVICE_LIST;
 	}
 	return NULL;

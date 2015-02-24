@@ -5,6 +5,30 @@
  */
 
 #include "HUE.h"
+hue* huesList;
+
+void appendHue(hue **lst, char* nodeid, char* endpoint, char* ManufacturerName,
+		char* DeviceID, char* InputCluster, char* OutputCluster) {
+	hue *neuesElement;
+	hue *lst_iter = *lst;
+
+	neuesElement = (struct hue_list*) malloc(sizeof(*neuesElement)); // erzeuge ein neues Element
+	neuesElement->NodeID = nodeid;
+	neuesElement->ep = endpoint;
+	neuesElement->ManufacturerName = ManufacturerName;
+	neuesElement->DeviceID = DeviceID;
+	neuesElement->InputCluster = InputCluster;
+	neuesElement->OutputCluster = OutputCluster;
+	neuesElement->next = NULL; // Wichtig für das Erkennen des Listenendes
+
+	if (lst_iter != NULL) { // sind Elemente vorhanden
+		while (lst_iter->next != NULL) // suche das letzte Element
+			lst_iter = lst_iter->next;
+		lst_iter->next = neuesElement; // Hänge das Element hinten an
+	} else
+		// wenn die liste leer ist, bin ich das erste Element
+		*lst = neuesElement;
+}
 
 /**
  * @deprecated

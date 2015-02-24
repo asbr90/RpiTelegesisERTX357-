@@ -31,10 +31,13 @@ typedef struct Socket_list {
 	char* DeviceID;
 	char* InputCluster;
 	char* OutputCluster;
-	struct Socket_list *nextSocket;
-}sockets;
-
+	struct Socket_list *next;
+} sockets;
+extern sockets *powerSocket;
 int getSocketInNetwork(void);
 char* connectSocketToNetwork(void);	//PJOIN command
+void appendSocket(sockets **lst, char* nodeid, char* endpoint,
+		char* ManufacturerName, char* DeviceID, char* InputCluster,
+		char* OutputCluste);
 
 #endif /*POWERSOCKET_H_*/

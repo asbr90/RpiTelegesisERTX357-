@@ -19,17 +19,26 @@
 #define COLORDIMERSWITCH	"0105"
 #define LIGHTSENSOR	"0106"
 #define OCCUPANCYSENSOR	"0107"
-
+#define	DIMMABLE_LIGHT	"0101"
+#define DimmablePluginUnit "0110"
+#define ColourLight "0200"
+#define ExtendedColourLight "0210"
+#define ColourTemperatureLight "0220"
 /**
  * @brief	contains a list of all power sockets in the network.
  */
 typedef struct hue_list {
+	char* NodeID;
 	char* ManufacturerName;
 	char* ep;
 	char* DeviceID;
 	char* InputCluster;
 	char* OutputCluster;
-	struct hue_list *nextHue;
-}hue;
+	struct hue_list *next;
+} hue;
 
+extern hue* huesList;
+void appendHuet(hue **lst, char* nodeid, char* endpoint,
+		char* ManufacturerName, char* DeviceID, char* InputCluster,
+		char* OutputCluste);
 #endif /*end define PHILIPSHUE_H_*/
