@@ -80,6 +80,32 @@ char* parseID(void) {
 	return id;
 }
 
+char* createResponseSocket(void) {
+	char* response = (char*) malloc(64 * sizeof(char));
+
+	strcat(response, powerSocket->NodeID);
+	strcat(response, ":");
+	strcat(response, powerSocket->DeviceID);
+	strcat(response, ":");
+	strcat(response, powerSocket->ep);
+	strcat(response, "\n");
+
+	return response;
+}
+
+char* createResponseHue(void) {
+	char* response = (char*) malloc(64 * sizeof(char));
+
+	strcat(response, huesList->NodeID);
+	strcat(response, ":");
+	strcat(response, huesList->DeviceID);
+	strcat(response, ":");
+	strcat(response, huesList->ep);
+	strcat(response, "\n");
+
+	return response;
+}
+
 char* distinguishInterface(char* command) {
 	char *ptr = strtok(command, "/");
 // set the parameter for the most of commands. If comands does not need the
@@ -137,7 +163,7 @@ char* distinguishInterface(char* command) {
 		char* ptr, *currentptr;
 		char* deviceIDList[100];
 		char* deviceEndpointList[100];
-		char* deviceID;
+		char* deviceID, *responseDL;
 
 		int index = 0, i;
 
@@ -149,21 +175,23 @@ char* distinguishInterface(char* command) {
 			strcat(payloadActiveEndpoint, ",");
 			strcat(payloadActiveEndpoint, device);
 
-			printf("payloadActiveEndpoint: %s\n", payloadActiveEndpoint);
-
 			responseActiveEndpoint = RequestNodesActiveEndpoints(
 					payloadActiveEndpoint);
 
 			responseActiveEndpoint = strstr(responseActiveEndpoint,
 					"ActEpDesc");
 
-			printf("responseActiveEndpoint: %s\n", responseActiveEndpoint);
 			deviceIDList[index] = device;
 			deviceEndpointList[index] = responseActiveEndpoint;
 			index++;
 			payloadActiveEndpoint = NULL;
 			payloadActiveEndpoint = (char*) malloc(20 * sizeof(char));
 		}
+
+		//get memory for response message
+		responseDL = (char*) malloc(
+				index * (12 * sizeof(char))
+						+ (index * strlen(UPDATE_DEVICE_LIST) * sizeof(char)));
 
 		for (i = 0; i < index; i++) {
 			ptr = strtok(deviceEndpointList[i], ":");
@@ -180,28 +208,22 @@ char* distinguishInterface(char* command) {
 								deviceEndpointList[i]), deviceID,
 						getInCluster(deviceIDList[i], deviceEndpointList[i]),
 						"");
-				printf("Device is a socket\n");
-				printf(
-						"Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\nManufacturer Name: %s\n",
-						powerSocket->ep, powerSocket->DeviceID,
-						powerSocket->InputCluster,
-						powerSocket->ManufacturerName);
-
+				strcat(responseDL, UPDATE_DEVICE_LIST);
+				strcat(responseDL, "/");
+				strcat(responseDL, createResponseSocket());
 			} else if (isDeviceHue(deviceID)) {
 				appendHue(&huesList, deviceIDList[i], deviceEndpointList[i],
 						getManufacturerName(deviceIDList[i],
 								deviceEndpointList[i]), deviceID,
 						getInCluster(deviceIDList[i], deviceEndpointList[i]),
 						"");
-				printf("Device is a Hue\n");
-				printf(
-						"Endpoint: %s\nDevice ID: %s\nInput Cluster: %s\nManufacturer Name: %s\n",
-						huesList->ep, huesList->DeviceID,
-						huesList->InputCluster, huesList->ManufacturerName);
+				strcat(responseDL, UPDATE_DEVICE_LIST);
+				strcat(responseDL, "/");
+				strcat(responseDL, createResponseHue());
 			}
 		}
 
-		return UPDATE_DEVICE_LIST;
+		return responseDL;
 	}
 	return NULL;
 }
