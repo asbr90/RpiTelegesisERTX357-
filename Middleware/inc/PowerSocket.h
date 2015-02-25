@@ -31,6 +31,7 @@ typedef struct Socket_list {
 	char* DeviceID;
 	char* InputCluster;
 	char* OutputCluster;
+	char* GroupID;
 	struct Socket_list *next;
 } sockets;
 extern sockets *powerSocket;

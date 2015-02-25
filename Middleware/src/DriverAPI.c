@@ -84,7 +84,7 @@ char* createResponseSocket(sockets* socketplug) {
 
 	char* response = (char*) malloc(64 * sizeof(char));
 
-	printf("Socketinfo: %s\n",socketplug->NodeID);
+	printf("Socketinfo: %s\n", socketplug->NodeID);
 	strcat(response, socketplug->NodeID);
 	strcat(response, ":");
 	strcat(response, socketplug->DeviceID);
@@ -112,10 +112,12 @@ char* distinguishInterface(char* command) {
 	char *ptr = strtok(command, "/");
 // set the parameter for the most of commands. If comands does not need the
 // value of this will be NULL
+	printf("Command: %s\n", command);
 	char* nodeid = strtok(NULL, "/");
 	char* endpoint = strtok(NULL, "/");
 	char* value = strtok(NULL, "/");
 	char* sendmode = strtok(NULL, "/");
+	char* groupName = strtok(NULL, "/");
 
 	if (strcmp(ptr, CHANGE_SOCKET_STATE_TO) == 0) {
 		changeSocketStateTo(nodeid, endpoint, value, sendmode);
@@ -133,9 +135,6 @@ char* distinguishInterface(char* command) {
 	if (strcmp(ptr, GET_HUE_INFO) == 0)
 		return GET_HUE_INFO;
 
-	if (strcmp(ptr, GET_LIST_OF_DEVICES) == 0)
-		return GET_LIST_OF_DEVICES;
-
 	if (strcmp(ptr, CHANGE_HUE_COLOR_TO) == 0) {
 		changeColor(nodeid, endpoint, value, sendmode);
 		return CHANGE_HUE_COLOR_TO;
@@ -151,11 +150,32 @@ char* distinguishInterface(char* command) {
 		return CHANGE_HUE_SATURATION_TO;
 	}
 
-	if (strcmp(ptr, OPEN_NETWORK) == 0)
+	if (strcmp(ptr, OPEN_NETWORK) == 0) {
+		PermitJoining("");
 		return OPEN_NETWORK;
+	}
 
-	if (strcmp(ptr, ADD_DEVICE_TO_GROUP) == 0)
+	if (strcmp(ptr, ADD_DEVICE_TO_GROUP) == 0) {
+		printf("groupid: %s\n", value);
+		printf("groupName: %s\n", groupName);
+		char* payload = (char*) malloc(
+				sizeof(char)
+						* (strlen(value) + strlen(groupName) + strlen(nodeid)
+								+ strlen(endpoint) + strlen(sendmode) + 16));
+
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, "0,");
+		strcat(payload, sendmode);
+		strcat(payload, ",");
+		strcat(payload, groupName);
+
+		AddGroupOnTargetDevice(payload);
+
 		return ADD_DEVICE_TO_GROUP;
+	}
 
 	if (strcmp(ptr, UPDATE_DEVICE_LIST) == 0) {
 		char* nTable = DisplayNeighbourTable("00,0000");
@@ -207,9 +227,9 @@ char* distinguishInterface(char* command) {
 			if (isDeviceSocket(deviceID)) {
 				//set socket list
 				appendSocket(&powerSocket, deviceIDList[i],
-						deviceEndpointList[i]," "
-					/*	getManufacturerName(deviceIDList[i],
-								deviceEndpointList[i])*/, deviceID,
+						deviceEndpointList[i], " "
+						/*	getManufacturerName(deviceIDList[i],
+						 deviceEndpointList[i])*/, deviceID,
 						getInCluster(deviceIDList[i], deviceEndpointList[i]),
 						"");
 				strcat(responseDL, UPDATE_DEVICE_LIST);
@@ -219,8 +239,8 @@ char* distinguishInterface(char* command) {
 
 			} else if (isDeviceHue(deviceID)) {
 				appendHue(&huesList, deviceIDList[i], deviceEndpointList[i],
-						/*getManufacturerName(deviceIDList[i],
-								deviceEndpointList[i])*/" ", deviceID,
+				/*getManufacturerName(deviceIDList[i],
+				 deviceEndpointList[i])*/" ", deviceID,
 						getInCluster(deviceIDList[i], deviceEndpointList[i]),
 						"");
 				strcat(responseDL, UPDATE_DEVICE_LIST);

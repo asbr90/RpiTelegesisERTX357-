@@ -32,6 +32,7 @@ typedef struct hue_list {
 	char* ManufacturerName;
 	char* ep;
 	char* DeviceID;
+	char* GroupID;
 	char* InputCluster;
 	char* OutputCluster;
 	struct hue_list *next;

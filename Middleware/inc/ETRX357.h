@@ -101,7 +101,7 @@
 #define READATR		"AT+READATR"	/**<Read Server Attribute*/
 #define CCMVTOSAT	"AT+CCMVTOSAT"	/**<Colour Control Move to Saturation Command*/
 #define CCMVTOHUS	"AT+CCMVTOHUS"	/**<Colour Control Move to Hue Saturation Command*/
-
+#define PJOIN		"AT+PJOIN"
 #define BASICCLUSTER	"0000"
 #define ONOFCLUSTER		"0006"
 #define COLORCLUSTER	"0300"
@@ -452,6 +452,7 @@ char* SwitchingTargetDevices(char*);
 char* ColourControlMovetoHue(char*);
 char* LevelControlCluster(char*);
 char* ColourControlMoveToSaturation(char*);
+char* PermitJoining(char*);
 /** @} */ // CFS
 /** @} */// end of functions
 #endif

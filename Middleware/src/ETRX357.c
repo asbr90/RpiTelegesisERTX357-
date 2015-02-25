@@ -670,7 +670,7 @@ char* getInCluster(char* nodeid, char* endpoint) {
 }
 
 char* getManufacturerName(char* nodeid, char* endpoint) {
-	char* payload = (char*) malloc(128*sizeof(char));
+	char* payload = (char*) malloc(128 * sizeof(char));
 	char* simpledesc, *deviceId;
 	char* response = (char*) malloc(512 * sizeof(char));
 	char* restattr;
@@ -685,7 +685,7 @@ char* getManufacturerName(char* nodeid, char* endpoint) {
 	strcat(payload, ",");
 	strcat(payload, "0004");
 
-	printf(" %s\n",payload);
+	printf(" %s\n", payload);
 	char* cmd = concatCommand(READATR, payload);
 
 	serialTransmit(cmd);
@@ -712,6 +712,22 @@ char* getManufacturerName(char* nodeid, char* endpoint) {
 
 	if (IsError(response) == NULL)
 		return ptr;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+char* PermitJoining(char* payload) {
+	char response[255];
+	char* cmd = concatCommand(PJOIN, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(250); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
 	else
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
