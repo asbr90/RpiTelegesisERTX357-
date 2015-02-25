@@ -155,9 +155,24 @@ char* distinguishInterface(char* command) {
 		return OPEN_NETWORK;
 	}
 
+	if( strcmp(ptr,REMOVE_DEVICE_FROM_GROUP)== 0){
+		char* payload = (char*)malloc(sizeof(char) *  (strlen(nodeid)
+								+ strlen(endpoint) + strlen(sendmode) + strlen(value) + 2) );
+		printf("sendmode: %s\n",sendmode);
+		strcat(payload,nodeid);
+		strcat(payload,",");
+		strcat(payload,endpoint);
+		strcat(payload,",");
+		strcat(payload,value);
+		strcat(payload,",");
+		strcat(payload,sendmode);
+
+		RemoveGroupMembershipOnTargetDevice(payload);
+		return REMOVE_DEVICE_FROM_GROUP;
+	}
+
 	if (strcmp(ptr, ADD_DEVICE_TO_GROUP) == 0) {
-		printf("groupid: %s\n", value);
-		printf("groupName: %s\n", groupName);
+
 		char* payload = (char*) malloc(
 				sizeof(char)
 						* (strlen(value) + strlen(groupName) + strlen(nodeid)

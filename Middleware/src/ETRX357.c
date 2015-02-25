@@ -717,8 +717,25 @@ char* getManufacturerName(char* nodeid, char* endpoint) {
 }
 
 char* PermitJoining(char* payload) {
-	char response[255];
+	char* response =(char*) malloc(128*sizeof(char)) ;
 	char* cmd = concatCommand(PJOIN, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(250); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}
+
+char* RemoveGroupMembershipOnTargetDevice(char* payload){
+	char* response = (char*) malloc(128*sizeof(char));
+
+	char* cmd = concatCommand(GPRMV, payload);
 
 	serialTransmit(cmd);
 	promptRequest(cmd);

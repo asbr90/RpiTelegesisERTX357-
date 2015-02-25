@@ -21,6 +21,7 @@
 #define CHANGE_HUE_STATE_TO	"HueState"		/**<Change the hue state to declared value*/
 #define OPEN_NETWORK	"OpenNetwork"		/**<Open the network for 60s. In this time new devices can connect to network*/
 #define ADD_DEVICE_TO_GROUP	"AddToGroup"	/**<Add a device to Group*/
+#define REMOVE_DEVICE_FROM_GROUP	"RemoveFromGroup"
 #define UPDATE_DEVICE_LIST	"UpdateList"
 
 /**
