@@ -748,3 +748,21 @@ char* RemoveGroupMembershipOnTargetDevice(char* payload){
 	else
 		return GetErrorCodeMessage(GetErrorCodeNumber(response));
 }
+
+
+char* ColourControlMoveToColour(char* payload){
+	char* response = (char*) malloc(128*sizeof(char));
+
+	char* cmd = concatCommand(CCMVCOL, payload);
+
+	serialTransmit(cmd);
+	promptRequest(cmd);
+	delay(250); // this is the max scanning time. Hint: could be change to interrupt handling?!
+	sprintf(response, "%s", serialReceive());
+	promptResponse(response);
+
+	if (IsError(response) == NULL)
+		return (char*) OK;
+	else
+		return GetErrorCodeMessage(GetErrorCodeNumber(response));
+}

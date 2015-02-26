@@ -23,7 +23,7 @@
 #define ADD_DEVICE_TO_GROUP	"AddToGroup"	/**<Add a device to Group*/
 #define REMOVE_DEVICE_FROM_GROUP	"RemoveFromGroup"
 #define UPDATE_DEVICE_LIST	"UpdateList"
-
+#define CHANGE_HUE_COLORXY_TO	"HueColorXY"
 /**
  * @brief	Function that distinguish the api command.
  * @param[in]	The parameter should be one of the API commands

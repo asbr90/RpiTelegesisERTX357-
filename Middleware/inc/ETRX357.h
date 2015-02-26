@@ -103,6 +103,7 @@
 #define CCMVTOHUS	"AT+CCMVTOHUS"	/**<Colour Control Move to Hue Saturation Command*/
 #define PJOIN		"AT+PJOIN"
 #define GPRMV		"AT+GPRMV"
+#define CCMVCOL		"AT+CCMVCOL"
 
 #define BASICCLUSTER	"0000"
 #define ONOFCLUSTER		"0006"
@@ -456,6 +457,7 @@ char* LevelControlCluster(char*);
 char* ColourControlMoveToSaturation(char*);
 char* PermitJoining(char*);
 char* RemoveGroupMembershipOnTargetDevice(char*);
+char* ColourControlMoveToColour(char* );
 /** @} */ // CFS
 /** @} */// end of functions
 #endif

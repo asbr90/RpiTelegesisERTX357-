@@ -118,7 +118,6 @@ char* distinguishInterface(char* command) {
 	char* value = strtok(NULL, "/");
 	char* sendmode = strtok(NULL, "/");
 	char* groupName = strtok(NULL, "/");
-
 	if (strcmp(ptr, CHANGE_SOCKET_STATE_TO) == 0) {
 		changeSocketStateTo(nodeid, endpoint, value, sendmode);
 		return CHANGE_SOCKET_STATE_TO;
@@ -140,6 +139,34 @@ char* distinguishInterface(char* command) {
 		return CHANGE_HUE_COLOR_TO;
 	}
 
+	if (strcmp(ptr, CHANGE_HUE_COLORXY_TO) == 0) {
+
+		char* ratey = strtok(NULL, "/");
+
+		char* payload = (char*) malloc(
+				sizeof(char)
+						* (strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
+								+ strlen(groupName) + strlen(ratey)
+								+ strlen(value) + 128));
+
+		printf(
+				"id: %s\nid: %s\nendpoint: %s\nvalue: %s\nsendmode: %s\ngroupName: %s\n",
+				nodeid, endpoint, value, sendmode, groupName);
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, value);
+		strcat(payload, ",");
+		strcat(payload, sendmode);
+		strcat(payload, ",");
+		strcat(payload, groupName);
+
+		printf("payload: %s\n", payload);
+		ColourControlMoveToColour(payload);
+		return CHANGE_HUE_COLORXY_TO;
+	}
+
 	if (strcmp(ptr, CHANGE_HUE_LEVEL_TO) == 0) {
 		moveToLevel(nodeid, endpoint, value, sendmode);
 		return CHANGE_HUE_LEVEL_TO;
@@ -155,17 +182,18 @@ char* distinguishInterface(char* command) {
 		return OPEN_NETWORK;
 	}
 
-	if( strcmp(ptr,REMOVE_DEVICE_FROM_GROUP)== 0){
-		char* payload = (char*)malloc(sizeof(char) *  (strlen(nodeid)
-								+ strlen(endpoint) + strlen(sendmode) + strlen(value) + 2) );
-		printf("sendmode: %s\n",sendmode);
-		strcat(payload,nodeid);
-		strcat(payload,",");
-		strcat(payload,endpoint);
-		strcat(payload,",");
-		strcat(payload,value);
-		strcat(payload,",");
-		strcat(payload,sendmode);
+	if (strcmp(ptr, REMOVE_DEVICE_FROM_GROUP) == 0) {
+		char* payload = (char*) malloc(
+				sizeof(char)
+						* (strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
+								+ strlen(value) + 2));
+		strcat(payload, nodeid);
+		strcat(payload, ",");
+		strcat(payload, endpoint);
+		strcat(payload, ",");
+		strcat(payload, value);
+		strcat(payload, ",");
+		strcat(payload, sendmode);
 
 		RemoveGroupMembershipOnTargetDevice(payload);
 		return REMOVE_DEVICE_FROM_GROUP;
