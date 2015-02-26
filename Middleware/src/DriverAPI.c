@@ -118,6 +118,8 @@ char* distinguishInterface(char* command) {
 	char* value = strtok(NULL, "/");
 	char* sendmode = strtok(NULL, "/");
 	char* groupName = strtok(NULL, "/");
+
+	printf("Got all items\n");
 	if (strcmp(ptr, CHANGE_SOCKET_STATE_TO) == 0) {
 		changeSocketStateTo(nodeid, endpoint, value, sendmode);
 		return CHANGE_SOCKET_STATE_TO;
@@ -146,12 +148,12 @@ char* distinguishInterface(char* command) {
 		char* payload = (char*) malloc(
 				sizeof(char)
 						* (strlen(nodeid) + strlen(endpoint) + strlen(sendmode)
-								+ strlen(groupName) + strlen(ratey)
-								+ strlen(value) + 128));
-
+								+ strlen(groupName) + strlen(value) + 128));
+		printf("Here i am\n");
 		printf(
 				"id: %s\nid: %s\nendpoint: %s\nvalue: %s\nsendmode: %s\ngroupName: %s\n",
 				nodeid, endpoint, value, sendmode, groupName);
+		printf("Here i am\n");
 		strcat(payload, nodeid);
 		strcat(payload, ",");
 		strcat(payload, endpoint);
@@ -230,7 +232,7 @@ char* distinguishInterface(char* command) {
 		char* deviceEndpointList[100];
 		char* deviceID, *responseDL;
 
-		int index = 0, i;
+		int index = 0, i = 0;
 
 		while ((device != NULL) && (strstr(device, "No.") == NULL))
 			device = strtok(NULL, "\n");
@@ -242,59 +244,74 @@ char* distinguishInterface(char* command) {
 
 			responseActiveEndpoint = RequestNodesActiveEndpoints(
 					payloadActiveEndpoint);
+			printf("index: %d\n", index);
+			printf("responseActiveEndpoint: %s\n", responseActiveEndpoint);
 
-			responseActiveEndpoint = strstr(responseActiveEndpoint,
-					"ActEpDesc");
+			if((responseActiveEndpoint = strstr(responseActiveEndpoint,
+									"ActEpDesc")) != NULL) {
 
-			deviceIDList[index] = device;
-			deviceEndpointList[index] = responseActiveEndpoint;
-			index++;
-			payloadActiveEndpoint = NULL;
-			payloadActiveEndpoint = (char*) malloc(20 * sizeof(char));
-		}
+						printf("responseActiveEndpoint after strstr: %s\n",responseActiveEndpoint);
 
-		//get memory for response message
-		responseDL = (char*) malloc(
-				index * (12 * sizeof(char))
-						+ (index * strlen(UPDATE_DEVICE_LIST) * sizeof(char)));
+						deviceIDList[index] = device;
+						deviceEndpointList[index] = responseActiveEndpoint;
+						printf("deviceEndpointList in while loop: %s\n",
+								deviceEndpointList[index]);
 
-		for (i = 0; i < index; i++) {
-			ptr = strtok(deviceEndpointList[i], ":");
-			ptr = strtok(NULL, ",");
-			ptr = strtok(NULL, ",");
-			ptr = strtok(NULL, "\n");	// last response of actepdesc
+						index++;
+						payloadActiveEndpoint = NULL;
+						payloadActiveEndpoint = (char*) malloc(
+								20 * sizeof(char));
+					}
+				}
 
-			deviceEndpointList[i] = ptr;
-			deviceID = getDeviceID(deviceIDList[i], deviceEndpointList[i]);
+				//get memory for response message
+				responseDL = (char*) malloc(
+						index * (12 * sizeof(char))
+								+ (10 * strlen(UPDATE_DEVICE_LIST)
+										* sizeof(char)));
 
-			if (isDeviceSocket(deviceID)) {
-				//set socket list
-				appendSocket(&powerSocket, deviceIDList[i],
-						deviceEndpointList[i], " "
-						/*	getManufacturerName(deviceIDList[i],
-						 deviceEndpointList[i])*/, deviceID,
-						getInCluster(deviceIDList[i], deviceEndpointList[i]),
-						"");
-				strcat(responseDL, UPDATE_DEVICE_LIST);
-				strcat(responseDL, "/");
-				strcat(responseDL, createResponseSocket(powerSocket));
-				powerSocket = powerSocket->next;
+				printf("deviceEndpointList: %s\n", deviceEndpointList[0]);
+				for (i = 0; i < index; i++) {
+					printf("deviceEndpointList[ %d ]: %s\n", i,
+							deviceEndpointList[i]);
+					ptr = strtok(deviceEndpointList[i], ":");
+					ptr = strtok(NULL, ",");
+					ptr = strtok(NULL, ",");
+					ptr = strtok(NULL, "\n");	// last response of actepdesc
+					printf("ptr: %s\n", ptr);
+					deviceEndpointList[i] = ptr;
+					deviceID = getDeviceID(deviceIDList[i],
+							deviceEndpointList[i]);
 
-			} else if (isDeviceHue(deviceID)) {
-				appendHue(&huesList, deviceIDList[i], deviceEndpointList[i],
-				/*getManufacturerName(deviceIDList[i],
-				 deviceEndpointList[i])*/" ", deviceID,
-						getInCluster(deviceIDList[i], deviceEndpointList[i]),
-						"");
-				strcat(responseDL, UPDATE_DEVICE_LIST);
-				strcat(responseDL, "/");
-				strcat(responseDL, createResponseHue(huesList));
-				huesList = huesList->next;
+					if (isDeviceSocket(deviceID)) {
+						//set socket list
+						appendSocket(&powerSocket, deviceIDList[i],
+								deviceEndpointList[i], " "
+								/*	getManufacturerName(deviceIDList[i],
+								 deviceEndpointList[i])*/, deviceID,
+								getInCluster(deviceIDList[i],
+										deviceEndpointList[i]), "");
+						strcat(responseDL, UPDATE_DEVICE_LIST);
+						strcat(responseDL, "/");
+						strcat(responseDL, createResponseSocket(powerSocket));
+						powerSocket = powerSocket->next;
+
+					} else if (isDeviceHue(deviceID)) {
+						appendHue(&huesList, deviceIDList[i],
+								deviceEndpointList[i],
+								/*getManufacturerName(deviceIDList[i],
+								 deviceEndpointList[i])*/" ", deviceID,
+								getInCluster(deviceIDList[i],
+										deviceEndpointList[i]), "");
+						strcat(responseDL, UPDATE_DEVICE_LIST);
+						strcat(responseDL, "/");
+						strcat(responseDL, createResponseHue(huesList));
+						huesList = huesList->next;
+					}
+				}
+
+				return responseDL;
 			}
+			return NULL;
 		}
-
-		return responseDL;
-	}
-	return NULL;
-}
 

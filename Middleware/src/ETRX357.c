@@ -605,7 +605,7 @@ char* getEndPoint(char* nodeid) {
 	ptr = strtok(NULL, ",");
 	ptr = strtok(NULL, ",");	// last response of actepdesc
 
-	free(payload);
+	//free(payload);
 	return ptr;
 }
 

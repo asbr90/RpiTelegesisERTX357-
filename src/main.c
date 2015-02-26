@@ -19,6 +19,7 @@
 
 int sBuffer = 512;
 
+
 int main(int argc, char *argv[]) {
 	int sockfd, newsockfd, portno;
 	socklen_t clilen;
@@ -77,23 +78,25 @@ int main(int argc, char *argv[]) {
 
 		if (n < 0) {
 			perror("ERROR reading from socket");
-			n = write(newsockfd, "NACK", 5);
+			newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 
-			if (n < 0)
-				perror("ERROR writing to socket");
 		} else {
 			printf("Server received message from client: %s\n", buffer);
 			api = distinguishInterface(buffer);
 			printf("API Command received:\n%s\n", buffer);
-			if (strstr(api, UPDATE_DEVICE_LIST)) {
-				printf("Send data to client:\n%s\n",api);
-				n = write(newsockfd, api, strlen(api) + 8);
-				printf("Write to client %d\n", n);
+			if (api != NULL) {
+				if (strstr(api, UPDATE_DEVICE_LIST) && api != NULL) {
+					printf("Send data to client:\n%s\n", api);
+					n = write(newsockfd, api, strlen(api) + 8);
+					printf("Write to client %d\n", n);
+				} else {
+					n = write(newsockfd, "ACK", 4);
+				}
+				if (n < 0)
+					perror("ERROR writing to socket");
 			} else {
-				n = write(newsockfd, "ACK", 4);
+				perror("NO valide API command found\n");
 			}
-			if (n < 0)
-				perror("ERROR writing to socket");
 		}
 	}
 	close(newsockfd);
