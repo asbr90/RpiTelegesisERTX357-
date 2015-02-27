@@ -119,13 +119,16 @@ char* distinguishInterface(char* command) {
 	char* sendmode = strtok(NULL, "/");
 	char* groupName = strtok(NULL, "/");
 
-	printf("Got all items\n");
 	if (strcmp(ptr, CHANGE_SOCKET_STATE_TO) == 0) {
 		changeSocketStateTo(nodeid, endpoint, value, sendmode);
 		return CHANGE_SOCKET_STATE_TO;
 	}
 
 	if (strcmp(ptr, CHANGE_HUE_STATE_TO) == 0) {
+		printf("nodeid: %s\n",nodeid);
+		printf("endpoint: %s\n",endpoint);
+		printf("value: %s\n",value);
+		printf("sendmode: %s\n",sendmode);
 		changeONOFFState(nodeid, endpoint, value, sendmode);
 		return CHANGE_HUE_STATE_TO;
 	}
