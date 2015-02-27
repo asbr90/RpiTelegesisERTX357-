@@ -102,34 +102,6 @@ int main(int argc, char *argv[]) {
 	close(newsockfd);
 	close(sockfd);
 
-//	moveToLevel("0001","0B","0a",SEND_TO_GROUP);
-//	changeONOFFState("0001","0B",ON_GROUP,SEND_TO_GROUP);
-//	changeColor("0001","0B","55",SEND_TO_GROUP);
-	/*	error_code = EstablishPAN(&zigbee);
-
-	 if (error_code != (char*) OK)
-	 printf("%s\n", error_code);
-	 else {
-	 printf("Channel: %d\n", zigbee.channel);
-	 printf("PID: %s\n", zigbee.PID);
-	 printf("EPID: %s\n", zigbee.EPID);
-	 }
-	 */
-//ScanForActivePAN(&list_pan);
-//DisplayNeighbourTable("00,0000");
-//AddGroupOnTargetDevice("05A3,0B,0,0001,smartTower");
-//AddGroupOnTargetDevice("717E,0B,0,0001,smartTower");
-//SendRAWZCLMessagetoTarget("717E,0B,0006,010002");
-	/*	printf("%d\n", list_pan->channel);
-	 printf("%s\n", list_pan->PID);
-	 printf("%s\n", list_pan->EPID);
-	 printf("%d\n", list_pan->stackProfile);
-	 printf("%d\n", list_pan->joinPermission);
-	 */
-//printf("%s\n", DisassociateLocalDeviceFromPAN(&zigbee));
-//printf("%s\n", JoinNetwork(&zigbee));
-//printf("Display: %s \n", DisplayNetworkInformation());
-//printf("Change Channel: %s\n",ChangeNetworkChannel("1A"));
 	return 0;
 }
 
